@@ -49,8 +49,9 @@ app.error(401)(v.auth_error)
 app.get('/login')(v.login)
 app.post('/login')(v.login)
 app.get('/logout')(v.logout)
-app.get('/n')(v.notes)
+app.get('/n')(v.view_notes)
 app.get('/n/<note_name>')(v.note_edit)
+app.post('/api/notes/<note_name>/put')(v.note_post)
 
 @app.route('/')
 def index():
