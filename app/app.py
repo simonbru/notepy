@@ -49,10 +49,12 @@ app.error(401)(v.auth_error)
 app.get('/login')(v.login)
 app.post('/login')(v.login)
 app.get('/logout')(v.logout)
+app.get('/n')(v.notes)
+app.get('/n/<note_name>')(v.note_edit)
 
 @app.route('/')
 def index():
-    redirect('/login')
+    redirect('/n')
 
 @app.route('/static/<filepath:path>')
 def static_route(filepath):

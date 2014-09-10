@@ -21,7 +21,13 @@ def logout():
     redirect('/login')
 
 @view('auth_error')
-def auth_error(truc):
-    print(truc)
+def auth_error(err):
     return {}
 
+@view('notes')
+def notes():
+    return {}
+    
+@view('note_edit')
+def note_edit(note_name):
+    return {'note_name': note_name}
