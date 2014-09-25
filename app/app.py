@@ -64,4 +64,4 @@ def static_route(filepath):
 
 
 if __name__ == '__main__':
-    run(app=app_middleware, host='0.0.0.0', port=8080, debug=True, reloader=True)
+    run(app=app_middleware, host='::', port=8080, debug=True, reloader=True, server='cherrypy')
