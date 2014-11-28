@@ -1,13 +1,19 @@
 % include("header", title="edit")
 
 <h1>Édition - {{note_name}}</h1>
-<button class="btn btn-primary" onclick="save()">Sauvegarder</button>
-<br><br>
-<textarea class="form-control" id="note_content">{{note_content}}</textarea>
-<script type="text/javascript" src="/static/note_edit.js"></script>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function(event) {
-	window.note = new Note("{{note_name}}");
+<div ng-app="notepy" ng-controller="noteController as noteCtrl">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.js"></script>
+<script>
+(function(){
+var app = angular.module('notepy', []);
+
+app.controller('noteController', function() {
+	this.content = "";
 });
+
+})();
 </script>
+<form ng-include="'/static/angular/note-edit-form.html'">
+
+</form>
 % include("footer")
