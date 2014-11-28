@@ -37,3 +37,7 @@ def note_edit(note_name):
 def note_post(note_name):
     #import time; time.sleep(5)
     notes.put_content(note_name, request.forms.note_content)
+
+def note_get(note_name):
+    #import time; time.sleep(5)
+    return {'note_content': notes.get_content(note_name)}
