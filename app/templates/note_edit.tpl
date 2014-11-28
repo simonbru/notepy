@@ -7,9 +7,24 @@
 (function(){
 var app = angular.module('notepy', []);
 
-app.controller('noteController', function() {
+app.controller('noteController', ['$http', function($http) {
 	this.content = "";
-});
+	var noteCtrl = this;
+	
+	$http.get('/api/notes/{{note_name}}/get').success(function(data) {
+		noteCtrl.content = data.note_content;
+		console.log(noteCtrl.content);
+	});
+	
+	this.save = function() {
+		
+		$http.post('/api/notes/{{note_name}}/put', 
+			$.param({note_content: noteCtrl.content}))
+			.success(function() {
+				console.log("sauvegarde réussie");
+			});
+	}
+}]);
 
 })();
 </script>
