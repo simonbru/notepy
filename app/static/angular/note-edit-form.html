@@ -1,4 +1,5 @@
 <button class="btn btn-primary" ng-click="noteCtrl.save()">Sauvegarder</button>
+<span class="label label-warning pull-right" ng-show="noteCtrl.isSaving">Sauvegarde en cours</span>
 <br><br>
 <textarea class="form-control" id="note_content" ng-model="noteCtrl.content"></textarea>
 <pre>{{noteCtrl.content}}</pre>

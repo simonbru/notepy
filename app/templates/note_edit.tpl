@@ -9,6 +9,8 @@ var app = angular.module('notepy', []);
 
 app.controller('noteController', ['$http', function($http) {
 	this.content = "";
+	this.isSaving = false;
+	
 	var noteCtrl = this;
 	
 	$http.get('/api/notes/{{note_name}}/get').success(function(data) {
@@ -17,10 +19,11 @@ app.controller('noteController', ['$http', function($http) {
 	});
 	
 	this.save = function() {
-		
+		noteCtrl.isSaving = true;
 		$http.post('/api/notes/{{note_name}}/put', 
 			$.param({note_content: noteCtrl.content}))
 			.success(function() {
+				noteCtrl.isSaving = false;
 				console.log("sauvegarde réussie");
 			});
 	}
