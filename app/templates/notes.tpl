@@ -5,10 +5,10 @@
 <h1>Liste des blocs-notes</h1>
 <div class="list-group">
     % for note in notes.list():
-    % datestring = note['mtime'].strftime('%d.%m.%Y à %H:%M:%S')
+    % datestring = note['mtime'].strftime('%d.%m.%Y Ã  %H:%M:%S')
     <a class="list-group-item" href="/n/{{note['name']}}">
         <h4 class="list-group-item-heading">{{note['name']}}</h4>
-        <p class="list-group-item-text">Dernière modification le {{datestring}}</p>
+        <p class="list-group-item-text">DerniÃ¨re modification le {{datestring}}</p>
     </a>
     % end
 </div>
