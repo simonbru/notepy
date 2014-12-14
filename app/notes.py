@@ -2,10 +2,8 @@ from pathlib import Path
 from os import path
 from datetime import datetime
 
-#FIXME
-notes_dir = Path(__file__).parent / 'notes'
-#notes_dir = path.join(path.abspath(path.dirname(__file__)), 'notes')
- 
+from config import NOTES_DIR as notes_dir
+
 
 def list():
     for note in notes_dir.iterdir():

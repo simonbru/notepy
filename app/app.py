@@ -6,6 +6,7 @@ from bottle import Bottle, run, view, static_file, abort, redirect, request, res
 from beaker.middleware import SessionMiddleware
 
 import views as v
+import config as conf
 
 current_dir = path.abspath(path.dirname(__file__))
 
@@ -17,7 +18,7 @@ app = Bottle()
 # Set middlewares
 session_opts = {
     'session.type': 'file',
-    'session.data_dir': path.join(current_dir, 'session'),
+    'session.data_dir': conf.SESSION_DIR,
     'session.auto': True
 }
 app_middleware = SessionMiddleware(app, session_opts)

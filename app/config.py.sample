@@ -1,0 +1,7 @@
+from pathlib import Path as _Path
+
+_current_dir = _Path(__file__).parent
+
+PASSWORD = 'testtest'
+NOTES_DIR = _current_dir / 'notes'
+SESSION_DIR = _current_dir / 'session'

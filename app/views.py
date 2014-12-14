@@ -1,12 +1,14 @@
 from bottle import view, request, error, redirect
+
 import notes
+import config as conf
 
 @view('login')
 def login():
     s = request.environ.get('beaker.session')
     vars = {}
     if request.method == 'POST':
-        if request.forms.password != 'testtest':
+        if request.forms.password != conf.PASSWORD:
             print("Auth error")
             vars['error_msg'] = 'Mauvais mot de passe'
             return vars

@@ -1,3 +1,4 @@
 __pycache__
 app/session
 app/notes
+app/config.py
