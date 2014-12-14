@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import path
+from os import path,umask
 
 from bottle import Bottle, run, view, static_file, abort, redirect, request, response, TEMPLATE_PATH
 from beaker.middleware import SessionMiddleware
@@ -9,6 +9,7 @@ import views as v
 import config as conf
 
 current_dir = path.abspath(path.dirname(__file__))
+umask(0o002)
 
 # Init bottle app
 TEMPLATE_PATH.append(path.join(current_dir, 'templates/'))
@@ -66,4 +67,4 @@ def static_route(filepath):
 
 
 if __name__ == '__main__':
-    run(app=app_middleware, host='::', port=8080, debug=True, reloader=True, server='cherrypy')
+    run(app=app_middleware, host=conf.LISTEN_IP, port=conf.LISTEN_PORT, debug=True, reloader=True, server='cherrypy')

@@ -5,3 +5,6 @@ _current_dir = _Path(__file__).parent
 PASSWORD = 'testtest'
 NOTES_DIR = _current_dir / 'notes'
 SESSION_DIR = _current_dir / 'session'
+
+LISTEN_IP = '::'
+LISTEN_PORT = 8080
