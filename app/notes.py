@@ -2,7 +2,9 @@ from pathlib import Path
 from os import path
 from datetime import datetime
 
-from config import NOTES_DIR as notes_dir
+from config import NOTES_DIR
+
+notes_dir = Path(NOTES_DIR)
 
 
 def list():
