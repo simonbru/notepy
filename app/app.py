@@ -13,7 +13,7 @@ current_dir = path.abspath(path.dirname(__file__))
 # Init bottle app
 TEMPLATE_PATH.append(path.join(current_dir, 'templates/'))
 app = Bottle()
-
+application = app
 
 # Set middlewares
 session_opts = {
