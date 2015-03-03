@@ -6,9 +6,10 @@
 <br><br>
 <textarea 
     class="form-control" 
-    id="note_content" 
+    id="note_content"
+    style="overflow:hidden;"
     ng-model="noteCtrl.content" 
-    ng-change="noteCtrl.deferSave()">
+    ng-change="noteCtrl.deferSave()"
+    ng-style="{'height': noteCtrl.scrollHeight()}">
 </textarea>
-<pre>{{noteCtrl.content}}</pre>
 </div>

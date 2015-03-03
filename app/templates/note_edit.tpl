@@ -13,6 +13,15 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	this.dirty = false;
 	this.lastSaved = Date.now();
 	
+	var _note_content;
+	this.scrollHeight = function() {
+		if (!_note_content)
+			_note_content = document.querySelector('#note_content');
+		if (!_note_content) return "20px"; // still not there
+		//console.log(_note_content.scrollHeight);
+		return _note_content.scrollHeight+"px";
+	}
+
 	var timeout = null;
 	
 	var noteCtrl = this;
