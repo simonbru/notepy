@@ -10,7 +10,6 @@
     class="form-control" 
     id="note_content"
     ng-model="noteCtrl.content" 
-    ng-change="noteCtrl.deferSave()"
-    ng-style="{'height': noteCtrl.scrollHeight()}">
+    ng-change="noteCtrl.deferSave(); noteCtrl.updateScrollHeight()"
 </textarea>
 

@@ -14,13 +14,24 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	this.dirty = false;
 	this.lastSaved = Date.now();
 	
-	var _note_content;
-	this.scrollHeight = function() {
-		if (!_note_content)
-			_note_content = document.querySelector('#note_content');
-		if (!_note_content) return "20px"; // still not there
-		//console.log(_note_content.scrollHeight);
-		return _note_content.scrollHeight+"px";
+	var _noteContent;
+	var _oldScrollHeight;
+	this.updateScrollHeight = function() {
+		if (!_noteContent)
+			_noteContent = $('#note_content');
+		var elem = _noteContent;
+
+		// ugly but works well
+		/*elem.height("0px");
+		elem.height(elem.prop('scrollHeight'));
+		return;*/
+
+		// Optimized but buggy
+		if (_oldScrollHeight != elem.prop('scrollHeight')) {
+			elem.height("0px");
+			elem.height(elem.prop('scrollHeight'));
+			_oldScrollHeight = elem.prop('scrollHeight');
+		}
 	}
 
 	var timeout = null;
@@ -29,7 +40,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	
 	$http.get('/api/notes/'+this.note_name+'/get').success(function(data) {
 		noteCtrl.content = data.note_content;
-		console.log(noteCtrl.content);
+		//console.log(noteCtrl.content);
 	});
 	
 	this.save = function() {
