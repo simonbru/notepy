@@ -1,0 +1,17 @@
+div.container {
+    padding-left:8px;
+    padding-right:8px;
+}
+
+/* note_edit */
+
+#note_edit_form {
+    margin-bottom: 300px;
+}
+
+#note_edit_form > #note_content {
+    overflow: hidden;
+    border-radius: 2px;
+    padding: 3px 3px;
+    box-shadow: none;
+}

@@ -58,7 +58,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 
 })();
 </script>
-<form ng-include="'/static/angular/note-edit-form.html'">
+<form ng-include="'/static/angular/note-edit-form.html'" id="note_edit_form">
 
 </form>
 % include("footer")
