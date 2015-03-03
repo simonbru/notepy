@@ -2,7 +2,7 @@
 
 % include("header", title="Notes")
 
-<h1>Liste des blocs-notes</h1>
+<h2>Liste des blocs-notes</h2>
 <div class="list-group">
     % for note in notes.list():
     % datestring = note['mtime'].strftime('%d.%m.%Y à %H:%M:%S')

@@ -1,6 +1,5 @@
 % include("header", title="edit")
 
-<h1>Édition - {{note_name}}</h1>
 <div ng-app="notepy" ng-controller="noteController as noteCtrl">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.js"></script>
 <script>
@@ -8,6 +7,8 @@
 var app = angular.module('notepy', []);
 
 app.controller('noteController', ['$http', '$timeout', function($http, $timeout) {
+% #may be dangerous ?
+	this.note_name = '{{note_name}}';
 	this.content = "";
 	this.isSaving = false;
 	this.dirty = false;
@@ -26,7 +27,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	
 	var noteCtrl = this;
 	
-	$http.get('/api/notes/{{note_name}}/get').success(function(data) {
+	$http.get('/api/notes/'+this.note_name+'/get').success(function(data) {
 		noteCtrl.content = data.note_content;
 		console.log(noteCtrl.content);
 	});
