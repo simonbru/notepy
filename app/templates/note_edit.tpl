@@ -13,6 +13,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	this.isSaving = false;
 	this.dirty = false;
 	this.lastSaved = Date.now();
+	var noteCtrl = this;
 	
 	var _noteContent;
 	var _oldScrollHeight;
@@ -26,22 +27,37 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 		elem.height(elem.prop('scrollHeight'));
 		return;*/
 
-		// Optimized but buggy
+		// More optimized but buggy
 		if (_oldScrollHeight != elem.prop('scrollHeight')) {
 			elem.height("0px");
 			elem.height(elem.prop('scrollHeight'));
 			_oldScrollHeight = elem.prop('scrollHeight');
 		}
 	}
+	
 
-	var timeout = null;
 	
-	var noteCtrl = this;
-	
-	$http.get('/api/notes/'+this.note_name+'/get').success(function(data) {
+	$http.get('/api/notes/'+this.note_name+'/get')
+	.success(function(data) {
+		if (data.note_content.length == 0)
+			return;
 		noteCtrl.content = data.note_content;
 		//console.log(noteCtrl.content);
+		
+		// Wait for noteContent to be actually loaded (hack)
+		var noteContent = $('#note_content');
+		var wait = function() {
+			if (noteContent.val().length > 0) {
+				noteCtrl.updateScrollHeight();
+				//console.log("loaded");
+			} else {
+				//console.log("wait");
+				$timeout(wait, 50);
+			}
+		};
+		wait();
 	});
+	
 	
 	this.save = function() {
 		noteCtrl.cancelSave();
@@ -55,6 +71,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 			});
 	}
 	
+	var timeout = null;
 	this.deferSave = function() {
 		noteCtrl.dirty = true;
 		noteCtrl.cancelSave();
