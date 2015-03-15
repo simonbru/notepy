@@ -6,6 +6,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notepy - {{title}}</title>
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
     <!-- Bootstrap -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="/static/styles.css" rel="stylesheet">
