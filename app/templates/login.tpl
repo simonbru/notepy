@@ -7,7 +7,7 @@
 <form action="/login" method="post" class="form-signin">
     <h2>Connexion</h2>
     <input type="password" placeholder="Mot de passe" name="password" 
-        class="form-control" required/>
+        class="form-control" required autofocus/>
     <button type="submit" class="btn btn-lg btn-primary btn-block">Se connecter</button>
 </form>
 
