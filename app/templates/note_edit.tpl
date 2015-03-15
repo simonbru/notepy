@@ -45,9 +45,9 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 		//console.log(noteCtrl.content);
 		
 		// Wait for noteContent to be actually loaded (hack)
-		var noteContent = $('#note_content');
 		var wait = function() {
-			if (noteContent.val().length > 0) {
+			var noteContent = $('#note_content');
+			if (noteContent.length > 0 && noteContent.val().length > 0) {
 				noteCtrl.updateScrollHeight();
 				//console.log("loaded");
 			} else {
