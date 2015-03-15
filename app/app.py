@@ -20,6 +20,7 @@ application = app
 session_opts = {
     'session.type': 'file',
     'session.data_dir': conf.SESSION_DIR,
+    'session.cookie_expires': False,
     'session.auto': True
 }
 app_middleware = SessionMiddleware(app, session_opts)
