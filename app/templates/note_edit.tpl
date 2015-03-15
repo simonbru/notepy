@@ -83,6 +83,17 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 			$timeout.cancel(timeout);
 		}
 	}
+	
+	$(window).bind('keydown', function(event) {
+		if (event.ctrlKey || event.metaKey) {
+			switch (String.fromCharCode(event.which).toLowerCase()) {
+			case 's':
+				event.preventDefault();
+				noteCtrl.save();
+				break;
+			}
+		}
+	});
 }]);
 
 })();
