@@ -65,10 +65,16 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 		$http.post('/api/notes/{{note_name}}/put', 
 			$.param({note_content: noteCtrl.content}))
 			.success(function() {
-				noteCtrl.isSaving = false;
 				noteCtrl.dirty = false;
+				noteCtrl.isSaving = false;
 				console.log("sauvegarde réussie");
+			})
+			.error(function(e) {
+				noteCtrl.isSaving = false;
+				alert("Erreur lors de la sauvergarde: "+e);
+				console.log(e);
 			});
+
 	}
 	
 	var timeout = null;
