@@ -81,7 +81,7 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	this.deferSave = function() {
 		noteCtrl.dirty = true;
 		noteCtrl.cancelSave();
-		timeout = $timeout(function() {noteCtrl.save()}, 3000); 
+		timeout = $timeout(function() {noteCtrl.save()}, 1500); 
 	}
 	
 	this.cancelSave = function() {
@@ -100,6 +100,20 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 			}
 		}
 	});
+	
+	window.onbeforeunload = function (event) {
+	  if (!noteCtrl.dirty) 
+		return;
+		
+	  var message = 'Il y a des modifications non sauvegardées.';
+	  if (typeof event == 'undefined') {
+		event = window.event;
+	  }
+	  if (event) {
+		event.returnValue = message;
+	  }
+	  return message;
+	}
 }]);
 
 })();
