@@ -1,8 +1,11 @@
 % include("header", title="edit")
 
 <div ng-app="notepy" ng-controller="noteController as noteCtrl">
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.js"></script>
+
 <script>
+% #may be dangerous ?
+window.note_name = '{{note_name}}';
+
 (function(){
 var app = angular.module('notepy', []);
 
@@ -116,9 +119,12 @@ app.controller('noteController', ['$http', '$timeout', function($http, $timeout)
 	}
 }]);
 
-})();
+});
 </script>
-<form ng-include="'/static/angular/note-edit-form.html'" id="note_edit_form">
-
-</form>
+<h2>{{note_name}}
+    <button class="btn btn-primary pull-right" onclick="noteApp.save()">Sauvegarder</button>
+</h2>
+<div id="note_app"></div>
+<script src="/static/react-with-addons.js"></script>
+<script src="/static/note_edit.js"></script>
 % include("footer")

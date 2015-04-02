@@ -1,4 +1,4 @@
-var NoteApp = React.createClass({displayName: "NoteApp",
+var NoteApp = React.createClass({
 	getInitialState: function() {
 		return {
 			isSaving: false,
@@ -10,28 +10,28 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 
 	componentWillMount: function() {
 		$.get('/api/notes/'+note_name+'/get')
-		.success(function(data)  {
+		.success((data) => {
 			if (data.note_content.length == 0)
 				return;
 			this.setState({
 				textContent: data.note_content,
 			});
-		}.bind(this));
+		});
 	},
 
 	render: function() {
 		return (
-		React.createElement("form", {id: "note_edit_form"}, 
-			React.createElement(SaveStateLabel, {
-				isSaving: this.state.isSaving, 
-				dirty: this.state.dirty}
-			), 
-			React.createElement("br", null), 
-			React.createElement(NoteContent, {
-				text: this.state.textContent, 
-				onChange: this.onTextChange}
-			)
-		)
+		<form id="note_edit_form">
+			<SaveStateLabel 
+				isSaving={this.state.isSaving} 
+				dirty={this.state.dirty}
+			/>
+			<br/>
+			<NoteContent 
+				text={this.state.textContent} 
+				onChange={this.onTextChange}
+			/>
+		</form>
 		);
 	},
 	
@@ -43,7 +43,7 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 		//Defer saving 
 		if (this.timeout)
 			clearTimeout(this.timeout);
-		this.timeout = setTimeout(function()  {return this.save();}.bind(this), 1500); 
+		this.timeout = setTimeout(() => this.save(), 1500); 
 	},
 	
 	save: function() {
@@ -52,24 +52,24 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 		this.setState({isSaving: true});
 		$.post('/api/notes/'+note_name+'/put', 
 			$.param({note_content: this.state.textContent}))
-			.done(function()  {
+			.done(() => {
 				this.setState({
 					dirty: false,
 					isSaving: false
 				});
 				console.log("sauvegarde réussie");
-			}.bind(this))
-			.fail(function(xhr,textStatus,err)  {
+			})
+			.fail((xhr,textStatus,err) => {
 				this.setState({
 					isSaving: false
 				});
 				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
 				console.log(xhr.responseText);
-			}.bind(this));
+			});
 	}
 });
 
-var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
+var SaveStateLabel = React.createClass({
 	getDefaultProps: function() {
 		return {
 			isSaving: false,
@@ -91,22 +91,22 @@ var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
 			var labelClass = 'label-danger';
 			var text = "Modifications non enregistrées";
 		}
-		return React.createElement("span", {className: "label pull-right "+labelClass}, text);
+		return <span className={"label pull-right "+labelClass}>{text}</span>;
 	}
 });
 
-var NoteContent = React.createClass({displayName: "NoteContent",
+var NoteContent = React.createClass({
 	
 	onChange: function(evt) {this.props.onChange(evt.target.value)},
 	
 	render: function() {
-		return React.createElement("textarea", {
-			className: "form-control", 
-			id: "note_content", 
-			onChange: this.onChange, 
-			value: this.props.text}
-			);
+		return <textarea 
+			className="form-control" 
+			id="note_content"
+			onChange={this.onChange}
+			value={this.props.text}
+			/>;
 	}
 });
 
-window.noteApp = React.render(React.createElement(NoteApp, null), document.getElementById("note_app"));
+window.noteApp = React.render(<NoteApp/>, document.getElementById("note_app"));
