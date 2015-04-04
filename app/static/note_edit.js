@@ -133,8 +133,29 @@ var NoteContent = React.createClass({displayName: "NoteContent",
 			className: "form-control", 
 			id: "note_content", 
 			onChange: this.onChange, 
-			value: this.props.text}
+			value: this.props.text, 
+			ref: "noteContent"}
 			);
+	},
+
+	componentDidUpdate: function() {
+		// if (!this._noteContent)
+			// _noteContent = $('#note_content');
+		// var elem = _noteContent;
+
+		var elem = $(React.findDOMNode(this.refs.noteContent));
+
+		// ugly but works well
+		/*elem.height("0px");
+		elem.height(elem.prop('scrollHeight'));
+		return;*/
+
+		// More optimized but buggy
+		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
+			elem.height("0px");
+			elem.height(elem.prop('scrollHeight'));
+			this._oldScrollHeight = elem.prop('scrollHeight');
+		}
 	}
 });
 
