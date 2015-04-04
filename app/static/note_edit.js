@@ -17,6 +17,32 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 				textContent: data.note_content,
 			});
 		}.bind(this));
+
+		$(window).bind('keydown', function(event)  {
+			if (event.ctrlKey || event.metaKey) {
+				switch (String.fromCharCode(event.which).toLowerCase()) {
+				case 's':
+					event.preventDefault();
+					this.save();
+					break;
+				}
+			}
+		}.bind(this));
+
+		$(window).bind('beforeunload', function(event)  {
+		  if (!this.state.dirty)
+			return;
+
+		  this.save();
+		  var message = 'Il y a des modifications non sauvegardées.';
+		  if (typeof event == 'undefined') {
+			event = window.event;
+		  }
+		  if (event) {
+			event.returnValue = message;
+		  }
+		  return message;
+		}.bind(this));
 	},
 
 	render: function() {
@@ -52,22 +78,23 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 		this.setState({isSaving: true});
 		$.post('/api/notes/'+note_name+'/put', 
 			$.param({note_content: this.state.textContent}))
-			.done(function()  {
-				this.setState({
-					dirty: false,
-					isSaving: false
-				});
-				console.log("sauvegarde réussie");
-			}.bind(this))
-			.fail(function(xhr,textStatus,err)  {
-				this.setState({
-					isSaving: false
-				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
-				console.log(xhr.responseText);
-			}.bind(this));
+		.done(function()  {
+			this.setState({
+				dirty: false,
+				isSaving: false
+			});
+			console.log("sauvegarde réussie");
+		}.bind(this))
+		.fail(function(xhr,textStatus,err)  {
+			this.setState({
+				isSaving: false
+			});
+			alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+			console.log(xhr.responseText);
+		}.bind(this));
 	}
 });
+
 
 var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
 	getDefaultProps: function() {
@@ -91,14 +118,16 @@ var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
 			var labelClass = 'label-danger';
 			var text = "Modifications non enregistrées";
 		}
-		return React.createElement("span", {className: "label pull-right "+labelClass}, text);
+		return React.createElement("span", {className: "label pull-right "+labelClass}, 
+				text);
 	}
 });
 
+
 var NoteContent = React.createClass({displayName: "NoteContent",
-	
+
 	onChange: function(evt) {this.props.onChange(evt.target.value)},
-	
+
 	render: function() {
 		return React.createElement("textarea", {
 			className: "form-control", 

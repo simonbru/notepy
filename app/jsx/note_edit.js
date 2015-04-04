@@ -17,6 +17,32 @@ var NoteApp = React.createClass({
 				textContent: data.note_content,
 			});
 		});
+
+		$(window).bind('keydown', (event) => {
+			if (event.ctrlKey || event.metaKey) {
+				switch (String.fromCharCode(event.which).toLowerCase()) {
+				case 's':
+					event.preventDefault();
+					this.save();
+					break;
+				}
+			}
+		});
+
+		$(window).bind('beforeunload', (event) => {
+		  if (!this.state.dirty)
+			return;
+
+		  this.save();
+		  var message = 'Il y a des modifications non sauvegardées.';
+		  if (typeof event == 'undefined') {
+			event = window.event;
+		  }
+		  if (event) {
+			event.returnValue = message;
+		  }
+		  return message;
+		});
 	},
 
 	render: function() {
@@ -52,22 +78,23 @@ var NoteApp = React.createClass({
 		this.setState({isSaving: true});
 		$.post('/api/notes/'+note_name+'/put', 
 			$.param({note_content: this.state.textContent}))
-			.done(() => {
-				this.setState({
-					dirty: false,
-					isSaving: false
-				});
-				console.log("sauvegarde réussie");
-			})
-			.fail((xhr,textStatus,err) => {
-				this.setState({
-					isSaving: false
-				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
-				console.log(xhr.responseText);
+		.done(() => {
+			this.setState({
+				dirty: false,
+				isSaving: false
 			});
+			console.log("sauvegarde réussie");
+		})
+		.fail((xhr,textStatus,err) => {
+			this.setState({
+				isSaving: false
+			});
+			alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+			console.log(xhr.responseText);
+		});
 	}
 });
+
 
 var SaveStateLabel = React.createClass({
 	getDefaultProps: function() {
@@ -91,14 +118,16 @@ var SaveStateLabel = React.createClass({
 			var labelClass = 'label-danger';
 			var text = "Modifications non enregistrées";
 		}
-		return <span className={"label pull-right "+labelClass}>{text}</span>;
+		return <span className={"label pull-right "+labelClass}>
+				{text}</span>;
 	}
 });
 
+
 var NoteContent = React.createClass({
-	
+
 	onChange: function(evt) {this.props.onChange(evt.target.value)},
-	
+
 	render: function() {
 		return <textarea 
 			className="form-control" 
