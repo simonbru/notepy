@@ -30,18 +30,18 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 		}.bind(this));
 
 		$(window).bind('beforeunload', function(event)  {
-		  if (!this.state.dirty)
-			return;
+			if (!this.state.dirty)
+				return;
 
-		  this.save();
-		  var message = 'Il y a des modifications non sauvegardées.';
-		  if (typeof event == 'undefined') {
-			event = window.event;
-		  }
-		  if (event) {
-			event.returnValue = message;
-		  }
-		  return message;
+			this.save();
+			var message = 'Il y a des modifications non sauvegardées.';
+			if (typeof event == 'undefined') {
+				event = window.event;
+			}
+			if (event) {
+				event.returnValue = message;
+			}
+			return message;
 		}.bind(this));
 	},
 
