@@ -72,27 +72,40 @@ var NoteApp = React.createClass({
 		this.timeout = setTimeout(() => this.save(), 1500); 
 	},
 	
-	save: function() {
-		console.log("save");
-		clearTimeout(this.timeout);
-		this.setState({isSaving: true});
-		$.post('/api/notes/'+note_name+'/put', 
-			$.param({note_content: this.state.textContent}))
-		.done(() => {
-			this.setState({
-				dirty: false,
-				isSaving: false
+	save: (function() {
+		// Put jqXHR in a closure
+		var jqXHR;
+		return function() {
+			console.log("save");
+			clearTimeout(this.timeout);
+			// Abort previous saving request
+			if(jqXHR) {
+				jqXHR.abort();
+			}
+			this.setState({isSaving: true});
+			jqXHR = $.post('/api/notes/'+note_name+'/put',
+				$.param({note_content: this.state.textContent}))
+			.done(() => {
+				this.setState({
+					dirty: false,
+					isSaving: false
+				});
+				console.log("sauvegarde réussie");
+			})
+			.fail((xhr,textStatus,err) => {
+				if (textStatus == "abort") {
+					// It just means another request has replaced us,
+					// so don't do anything
+					return;
+				}
+				this.setState({
+					isSaving: false
+				});
+				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+				console.log(xhr.responseText);
 			});
-			console.log("sauvegarde réussie");
-		})
-		.fail((xhr,textStatus,err) => {
-			this.setState({
-				isSaving: false
-			});
-			alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
-			console.log(xhr.responseText);
-		});
-	}
+		};
+	})()
 });
 
 
