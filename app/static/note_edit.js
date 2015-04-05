@@ -139,12 +139,8 @@ var NoteContent = React.createClass({displayName: "NoteContent",
 	},
 
 	componentDidUpdate: function() {
-		// if (!this._noteContent)
-			// _noteContent = $('#note_content');
-		// var elem = _noteContent;
-
 		var elem = $(React.findDOMNode(this.refs.noteContent));
-
+		
 		// ugly but works well
 		/*elem.height("0px");
 		elem.height(elem.prop('scrollHeight'));
@@ -152,8 +148,14 @@ var NoteContent = React.createClass({displayName: "NoteContent",
 
 		// More optimized but buggy
 		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
+			var win = $(window);
+			var oldWinScroll = win.scrollTop();
+
 			elem.height("0px");
 			elem.height(elem.prop('scrollHeight'));
+			win.scrollTop(oldWinScroll);
+
+			//console.log(this._oldScrollHeight, " vs ", elem.prop('scrollHeight'));
 			this._oldScrollHeight = elem.prop('scrollHeight');
 		}
 	}
