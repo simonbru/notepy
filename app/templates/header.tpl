@@ -1,5 +1,7 @@
 % from bottle import request
+% import config as conf
 % s = request.environ.get('beaker.session')
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +10,12 @@
     <title>Notepy - {{title}}</title>
     <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
     <!-- Bootstrap -->
+    % if conf.DEVMODE:
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    % else:
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    %end
+    
     <link href="/static/styles.css" rel="stylesheet">
     % if request.urlparts.path == '/login':
     <style>
@@ -32,8 +39,13 @@
     </style>
     % end
     
-    <script src="/static/jquery-2.1.1.js"></script>
+    % if conf.DEVMODE:
+    <script src="/static/jquery-2.1.3.js"></script>
     <script src="/static/bootstrap/js/bootstrap.js"></script>
+    % else:
+    <script src="/static/jquery-2.1.3.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    %end
 </head>
 <body>
 % if s['auth'] == True:
