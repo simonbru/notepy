@@ -1,4 +1,6 @@
 var NoteApp = React.createClass({
+	mixins: [React.addons.PureRenderMixin],
+
 	getInitialState: function() {
 		return {
 			isSaving: false,
@@ -110,6 +112,8 @@ var NoteApp = React.createClass({
 
 
 var SaveStateLabel = React.createClass({
+	mixins: [React.addons.PureRenderMixin],
+
 	getDefaultProps: function() {
 		return {
 			isSaving: false,
@@ -138,6 +142,7 @@ var SaveStateLabel = React.createClass({
 
 
 var NoteContent = React.createClass({
+	mixins: [React.addons.PureRenderMixin],
 
 	onChange: function(evt) {this.props.onChange(evt.target.value)},
 
