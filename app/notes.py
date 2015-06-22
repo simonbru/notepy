@@ -8,7 +8,7 @@ notes_dir = Path(NOTES_DIR)
 
 
 def list():
-    for note in sorted(notes_dir.iterdir()):
+    for note in sorted(notes_dir.glob("*.md")):
         yield {
             'name': "".join(note.name.split('.')[:-1]),
             'mtime': datetime.fromtimestamp(note.stat().st_mtime)
