@@ -1,7 +1,9 @@
-var NoteApp = React.createClass({displayName: "NoteApp",
+var NoteApp = React.createClass({
+	displayName: 'NoteApp',
+
 	mixins: [React.addons.PureRenderMixin],
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			isSaving: false,
 			dirty: false,
@@ -10,30 +12,27 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 		};
 	},
 
-	componentWillMount: function() {
-		$.get('/api/notes/'+note_name+'/get')
-		.success(function(data)  {
-			if (data.note_content.length == 0)
-				return;
+	componentWillMount: function () {
+		$.get('/api/notes/' + note_name + '/get').success(data => {
+			if (data.note_content.length == 0) return;
 			this.setState({
-				textContent: data.note_content,
+				textContent: data.note_content
 			});
-		}.bind(this));
+		});
 
-		$(window).bind('keydown', function(event)  {
+		$(window).bind('keydown', event => {
 			if (event.ctrlKey || event.metaKey) {
 				switch (String.fromCharCode(event.which).toLowerCase()) {
-				case 's':
-					event.preventDefault();
-					this.save();
-					break;
+					case 's':
+						event.preventDefault();
+						this.save();
+						break;
 				}
 			}
-		}.bind(this));
+		});
 
-		$(window).bind('beforeunload', function(event)  {
-			if (!this.state.dirty)
-				return;
+		$(window).bind('beforeunload', event => {
+			if (!this.state.dirty) return;
 
 			this.save();
 			var message = 'Il y a des modifications non sauvegardées.';
@@ -44,57 +43,53 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 				event.returnValue = message;
 			}
 			return message;
-		}.bind(this));
+		});
 	},
 
-	render: function() {
-		return (
-		React.createElement("form", {id: "note_edit_form"}, 
+	render: function () {
+		return React.createElement(
+			'form',
+			{ id: 'note_edit_form' },
 			React.createElement(SaveStateLabel, {
-				isSaving: this.state.isSaving, 
-				dirty: this.state.dirty}
-			), 
-			React.createElement("br", null), 
+				isSaving: this.state.isSaving,
+				dirty: this.state.dirty
+			}),
+			React.createElement('br', null),
 			React.createElement(NoteContent, {
-				text: this.state.textContent, 
-				onChange: this.onTextChange}
-			)
-		)
+				text: this.state.textContent,
+				onChange: this.onTextChange
+			})
 		);
 	},
-	
-	onTextChange: function(text) {
+
+	onTextChange: function (text) {
 		this.setState({
 			textContent: text,
 			dirty: true
 		});
-		//Defer saving 
-		if (this.timeout)
-			clearTimeout(this.timeout);
-		this.timeout = setTimeout(function()  {return this.save();}.bind(this), 1500); 
+		//Defer saving
+		if (this.timeout) clearTimeout(this.timeout);
+		this.timeout = setTimeout(() => this.save(), 1500);
 	},
-	
-	save: (function() {
+
+	save: (function () {
 		// Put jqXHR in a closure
 		var jqXHR;
-		return function() {
+		return function () {
 			console.log("save");
 			clearTimeout(this.timeout);
 			// Abort previous saving request
-			if(jqXHR) {
+			if (jqXHR) {
 				jqXHR.abort();
 			}
-			this.setState({isSaving: true});
-			jqXHR = $.post('/api/notes/'+note_name+'/put',
-				$.param({note_content: this.state.textContent}))
-			.done(function()  {
+			this.setState({ isSaving: true });
+			jqXHR = $.post('/api/notes/' + note_name + '/put', $.param({ note_content: this.state.textContent })).done(() => {
 				this.setState({
 					dirty: false,
 					isSaving: false
 				});
 				console.log("sauvegarde réussie");
-			}.bind(this))
-			.fail(function(xhr,textStatus,err)  {
+			}).fail((xhr, textStatus, err) => {
 				if (textStatus == "abort") {
 					// It just means another request has replaced us,
 					// so don't do anything
@@ -103,29 +98,30 @@ var NoteApp = React.createClass({displayName: "NoteApp",
 				this.setState({
 					isSaving: false
 				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+				alert("Erreur lors de la sauvergarde: " + err + "\n" + xhr.responseText);
 				console.log(xhr.responseText);
-			}.bind(this));
+			});
 		};
 	})()
 });
 
+var SaveStateLabel = React.createClass({
+	displayName: 'SaveStateLabel',
 
-var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
 	mixins: [React.addons.PureRenderMixin],
 
-	getDefaultProps: function() {
+	getDefaultProps: function () {
 		return {
 			isSaving: false,
 			dirty: false
 		};
 	},
-	
-	render: function() {
+
+	render: function () {
 		// var classes = React.addons.classSet({
-			// 'label': true,
-			// 'pull-right': true,
-			// 'label-asd': true
+		// 'label': true,
+		// 'pull-right': true,
+		// 'label-asd': true
 		// });
 		var labelClass = text = "";
 		if (this.props.isSaving) {
@@ -135,34 +131,40 @@ var SaveStateLabel = React.createClass({displayName: "SaveStateLabel",
 			var labelClass = 'label-danger';
 			var text = "Modifications non enregistrées";
 		}
-		return React.createElement("span", {className: "label pull-right "+labelClass}, 
-				text);
+		return React.createElement(
+			'span',
+			{ className: "label pull-right " + labelClass },
+			text
+		);
 	}
 });
 
+var NoteContent = React.createClass({
+	displayName: 'NoteContent',
 
-var NoteContent = React.createClass({displayName: "NoteContent",
 	mixins: [React.addons.PureRenderMixin],
 
-	onChange: function(evt) {this.props.onChange(evt.target.value)},
-
-	render: function() {
-		return React.createElement("textarea", {
-			className: "form-control", 
-			id: "note_content", 
-			onChange: this.onChange, 
-			value: this.props.text, 
-			ref: "noteContent"}
-			);
+	onChange: function (evt) {
+		this.props.onChange(evt.target.value);
 	},
 
-	componentDidUpdate: function() {
+	render: function () {
+		return React.createElement('textarea', {
+			className: 'form-control',
+			id: 'note_content',
+			onChange: this.onChange,
+			value: this.props.text,
+			ref: 'noteContent'
+		});
+	},
+
+	componentDidUpdate: function () {
 		var elem = $(React.findDOMNode(this.refs.noteContent));
-		
+
 		// ugly but works well
 		/*elem.height("0px");
-		elem.height(elem.prop('scrollHeight'));
-		return;*/
+  elem.height(elem.prop('scrollHeight'));
+  return;*/
 
 		// More optimized but buggy
 		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
@@ -180,3 +182,4 @@ var NoteContent = React.createClass({displayName: "NoteContent",
 });
 
 window.noteApp = React.render(React.createElement(NoteApp, null), document.getElementById("note_app"));
+//# sourceMappingURL=note_edit.js.map
