@@ -50,30 +50,30 @@ var NoteApp = React.createClass({
 	render: function() {
 		return (
 		<form id="note_edit_form">
-			<SaveStateLabel 
-				isSaving={this.state.isSaving} 
+			<SaveStateLabel
+				isSaving={this.state.isSaving}
 				dirty={this.state.dirty}
 			/>
 			<br/>
-			<NoteContent 
-				text={this.state.textContent} 
+			<NoteContent
+				text={this.state.textContent}
 				onChange={this.onTextChange}
 			/>
 		</form>
 		);
 	},
-	
+
 	onTextChange: function(text) {
 		this.setState({
 			textContent: text,
 			dirty: true
 		});
-		//Defer saving 
+		//Defer saving
 		if (this.timeout)
 			clearTimeout(this.timeout);
-		this.timeout = setTimeout(() => this.save(), 1500); 
+		this.timeout = setTimeout(() => this.save(), 1500);
 	},
-	
+
 	save: (function() {
 		// Put jqXHR in a closure
 		var jqXHR;
@@ -111,34 +111,22 @@ var NoteApp = React.createClass({
 });
 
 
-var SaveStateLabel = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
-
-	getDefaultProps: function() {
-		return {
-			isSaving: false,
-			dirty: false
-		};
-	},
-	
-	render: function() {
-		// var classes = React.addons.classSet({
-			// 'label': true,
-			// 'pull-right': true,
-			// 'label-asd': true
-		// });
-		var labelClass = text = "";
-		if (this.props.isSaving) {
-			var labelClass = 'label-warning';
-			var text = "Sauvegarde en cours";
-		} else if (this.props.dirty) {
-			var labelClass = 'label-danger';
-			var text = "Modifications non enregistrées";
-		}
-		return <span className={"label pull-right "+labelClass}>
-				{text}</span>;
+var SaveStateLabel = ({isSaving, dirty}) => {
+	// var classes = React.addons.classSet({
+		// 'label': true,
+		// 'pull-right': true,
+		// 'label-asd': true
+	// });
+	var labelClass = text = "";
+	if (isSaving) {
+		var labelClass = 'label-warning';
+		var text = "Sauvegarde en cours";
+	} else if (dirty) {
+		var labelClass = 'label-danger';
+		var text = "Modifications non enregistrées";
 	}
-});
+	return <span className={"label pull-right "+labelClass}>{text}</span>;
+};
 
 
 var NoteContent = React.createClass({
@@ -147,8 +135,8 @@ var NoteContent = React.createClass({
 	onChange: function(evt) {this.props.onChange(evt.target.value)},
 
 	render: function() {
-		return <textarea 
-			className="form-control" 
+		return <textarea
+			className="form-control"
 			id="note_content"
 			onChange={this.onChange}
 			value={this.props.text}
@@ -157,8 +145,8 @@ var NoteContent = React.createClass({
 	},
 
 	componentDidUpdate: function() {
-		var elem = $(React.findDOMNode(this.refs.noteContent));
-		
+		var elem = $(this.refs.noteContent);
+
 		// ugly but works well
 		/*elem.height("0px");
 		elem.height(elem.prop('scrollHeight'));

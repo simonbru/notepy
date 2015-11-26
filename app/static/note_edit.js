@@ -105,39 +105,26 @@ var NoteApp = React.createClass({
 	})()
 });
 
-var SaveStateLabel = React.createClass({
-	displayName: 'SaveStateLabel',
-
-	mixins: [React.addons.PureRenderMixin],
-
-	getDefaultProps: function () {
-		return {
-			isSaving: false,
-			dirty: false
-		};
-	},
-
-	render: function () {
-		// var classes = React.addons.classSet({
-		// 'label': true,
-		// 'pull-right': true,
-		// 'label-asd': true
-		// });
-		var labelClass = text = "";
-		if (this.props.isSaving) {
-			var labelClass = 'label-warning';
-			var text = "Sauvegarde en cours";
-		} else if (this.props.dirty) {
-			var labelClass = 'label-danger';
-			var text = "Modifications non enregistrées";
-		}
-		return React.createElement(
-			'span',
-			{ className: "label pull-right " + labelClass },
-			text
-		);
+var SaveStateLabel = ({ isSaving, dirty }) => {
+	// var classes = React.addons.classSet({
+	// 'label': true,
+	// 'pull-right': true,
+	// 'label-asd': true
+	// });
+	var labelClass = text = "";
+	if (isSaving) {
+		var labelClass = 'label-warning';
+		var text = "Sauvegarde en cours";
+	} else if (dirty) {
+		var labelClass = 'label-danger';
+		var text = "Modifications non enregistrées";
 	}
-});
+	return React.createElement(
+		'span',
+		{ className: "label pull-right " + labelClass },
+		text
+	);
+};
 
 var NoteContent = React.createClass({
 	displayName: 'NoteContent',
@@ -159,7 +146,7 @@ var NoteContent = React.createClass({
 	},
 
 	componentDidUpdate: function () {
-		var elem = $(React.findDOMNode(this.refs.noteContent));
+		var elem = $(this.refs.noteContent);
 
 		// ugly but works well
 		/*elem.height("0px");
