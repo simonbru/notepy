@@ -15,7 +15,7 @@
     % else:
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     %end
-    
+
     <link href="/static/styles.css" rel="stylesheet">
     % if request.urlparts.path == '/login':
     <style>
@@ -38,12 +38,12 @@
         }
     </style>
     % end
-    
+
     % if conf.DEVMODE:
-    <script src="/static/jquery-2.1.3.js"></script>
+    <script src="/static/jquery-2.1.4.js"></script>
     <script src="/static/bootstrap/js/bootstrap.js"></script>
     % else:
-    <script src="/static/jquery-2.1.3.min.js"></script>
+    <script src="/static/jquery-2.1.4.min.js"></script>
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     %end
 </head>
@@ -82,4 +82,3 @@
 </div>
 % end
 <div class="container">
-
