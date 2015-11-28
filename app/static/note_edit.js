@@ -1,9 +1,11 @@
+'use strict';
+
 var NoteApp = React.createClass({
 	displayName: 'NoteApp',
 
 	mixins: [React.addons.PureRenderMixin],
 
-	getInitialState: function () {
+	getInitialState: function getInitialState() {
 		return {
 			isSaving: false,
 			dirty: false,
@@ -12,29 +14,31 @@ var NoteApp = React.createClass({
 		};
 	},
 
-	componentWillMount: function () {
-		$.get('/api/notes/' + note_name + '/get').success(data => {
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		$.get('/api/notes/' + note_name + '/get').success(function (data) {
 			if (data.note_content.length == 0) return;
-			this.setState({
+			_this.setState({
 				textContent: data.note_content
 			});
 		});
 
-		$(window).bind('keydown', event => {
+		$(window).bind('keydown', function (event) {
 			if (event.ctrlKey || event.metaKey) {
 				switch (String.fromCharCode(event.which).toLowerCase()) {
 					case 's':
 						event.preventDefault();
-						this.save();
+						_this.save();
 						break;
 				}
 			}
 		});
 
-		$(window).bind('beforeunload', event => {
-			if (!this.state.dirty) return;
+		$(window).bind('beforeunload', function (event) {
+			if (!_this.state.dirty) return;
 
-			this.save();
+			_this.save();
 			var message = 'Il y a des modifications non sauvegardées.';
 			if (typeof event == 'undefined') {
 				event = window.event;
@@ -46,7 +50,7 @@ var NoteApp = React.createClass({
 		});
 	},
 
-	render: function () {
+	render: function render() {
 		return React.createElement(
 			'form',
 			{ id: 'note_edit_form' },
@@ -62,20 +66,26 @@ var NoteApp = React.createClass({
 		);
 	},
 
-	onTextChange: function (text) {
+	onTextChange: function onTextChange(text) {
+		var _this2 = this;
+
 		this.setState({
 			textContent: text,
 			dirty: true
 		});
 		//Defer saving
 		if (this.timeout) clearTimeout(this.timeout);
-		this.timeout = setTimeout(() => this.save(), 1500);
+		this.timeout = setTimeout(function () {
+			return _this2.save();
+		}, 1500);
 	},
 
 	save: (function () {
 		// Put jqXHR in a closure
 		var jqXHR;
 		return function () {
+			var _this3 = this;
+
 			console.log("save");
 			clearTimeout(this.timeout);
 			// Abort previous saving request
@@ -83,19 +93,19 @@ var NoteApp = React.createClass({
 				jqXHR.abort();
 			}
 			this.setState({ isSaving: true });
-			jqXHR = $.post('/api/notes/' + note_name + '/put', $.param({ note_content: this.state.textContent })).done(() => {
-				this.setState({
+			jqXHR = $.post('/api/notes/' + note_name + '/put', $.param({ note_content: this.state.textContent })).done(function () {
+				_this3.setState({
 					dirty: false,
 					isSaving: false
 				});
 				console.log("sauvegarde réussie");
-			}).fail((xhr, textStatus, err) => {
+			}).fail(function (xhr, textStatus, err) {
 				if (textStatus == "abort") {
 					// It just means another request has replaced us,
 					// so don't do anything
 					return;
 				}
-				this.setState({
+				_this3.setState({
 					isSaving: false
 				});
 				alert("Erreur lors de la sauvergarde: " + err + "\n" + xhr.responseText);
@@ -105,7 +115,10 @@ var NoteApp = React.createClass({
 	})()
 });
 
-var SaveStateLabel = ({ isSaving, dirty }) => {
+var SaveStateLabel = function SaveStateLabel(_ref) {
+	var isSaving = _ref.isSaving;
+	var dirty = _ref.dirty;
+
 	// var classes = React.addons.classSet({
 	// 'label': true,
 	// 'pull-right': true,
@@ -131,11 +144,11 @@ var NoteContent = React.createClass({
 
 	mixins: [React.addons.PureRenderMixin],
 
-	onChange: function (evt) {
+	onChange: function onChange(evt) {
 		this.props.onChange(evt.target.value);
 	},
 
-	render: function () {
+	render: function render() {
 		return React.createElement('textarea', {
 			className: 'form-control',
 			id: 'note_content',
@@ -145,7 +158,7 @@ var NoteContent = React.createClass({
 		});
 	},
 
-	componentDidUpdate: function () {
+	componentDidUpdate: function componentDidUpdate() {
 		var elem = $(this.refs.noteContent);
 
 		// ugly but works well
