@@ -133,6 +133,15 @@ var todotxt = (function () {
     };
 
     /**
+     * Un-complete a task
+     * @return {TodoItem}
+     */
+    TodoItem.prototype.uncomplete = function () {
+        this.completedAt = false;
+        return this;
+    };
+
+    /**
      * Is the task complete?
      * @return {Boolean} - True if a completion date is set.
      */
@@ -154,7 +163,7 @@ var todotxt = (function () {
         return (with_id ? this.id + ': ' : '') +
             (this.completedAt ? 'x ' + date_str(this.completedAt) + ' ' : '') +
             (this.priority ? '(' + this.priority + ') ' : '') +
-            (this.createdAt ? date_str(this.createdAt) + ' ' : '') +
+            //(this.createdAt ? date_str(this.createdAt) + ' ' : '') +
             this.text;
     };
 
@@ -225,7 +234,7 @@ var todotxt = (function () {
         this.indexes.id[id] = id - 1;
         this.index(this.items[id - 1]);
 
-        this.sort();
+        //this.sort();
 
         return this.items[this.indexes.id[id]];
     };
@@ -440,7 +449,7 @@ var todotxt = (function () {
             }
         }
 
-        this.sort(items);
+        //this.sort(items);
 
         return items;
     };
@@ -753,6 +762,18 @@ var todotxt = (function () {
      */
     TodoList.prototype.source = function () {
         return this.filename || 'memory';
+    };
+
+    /**
+     * Get all the tasks lines
+     * @param {Boolean} [with_id=false] Include the tasks ids in output
+     * @return {String} Tasks as a string
+     */
+    TodoList.prototype.toString = function (with_id) {
+        var toString = function(e) {
+            return e.toString(with_id);
+        };
+        return this.items.map(toString).join('\n');
     };
 
     return {
