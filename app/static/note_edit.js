@@ -181,5 +181,8 @@ var NoteContent = React.createClass({
 	}
 });
 
-window.noteApp = React.render(React.createElement(NoteApp, null), document.getElementById("note_app"));
+//$(document).ready(() => {
+$(window).on('load', function () {
+	window.noteApp = React.render(React.createElement(NoteApp, null), document.getElementById("note_app"));
+});
 //# sourceMappingURL=note_edit.js.map
