@@ -19,10 +19,6 @@ var TodoApp = React.createClass({
 		$.get('/api/notes/' + note_name + '/get').success(function (data) {
 			window.todoList = _this.state.todoList;
 			todoList.parse(data.note_content);
-			if (data.note_content.length == 0) return;
-			// this.setState({
-			// 	textContent: data.note_content,
-			// });
 		});
 
 		$(window).bind('keydown', function (event) {
@@ -54,7 +50,7 @@ var TodoApp = React.createClass({
 	render: function render() {
 		return React.createElement(
 			'form',
-			{ id: 'note_edit_form' },
+			{ id: 'todo_edit_form' },
 			React.createElement(SaveStateLabel, {
 				isSaving: this.state.isSaving,
 				dirty: this.state.dirty

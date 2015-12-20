@@ -14,11 +14,6 @@ var TodoApp = React.createClass({
 		.success((data) => {
 			window.todoList = this.state.todoList;
 			todoList.parse(data.note_content);
-			if (data.note_content.length == 0)
-				return;
-			// this.setState({
-			// 	textContent: data.note_content,
-			// });
 		});
 
 		$(window).bind('keydown', (event) => {
@@ -50,7 +45,7 @@ var TodoApp = React.createClass({
 
 	render: function() {
 		return (
-		<form id="note_edit_form">
+		<form id="todo_edit_form">
 			<SaveStateLabel
 				isSaving={this.state.isSaving}
 				dirty={this.state.dirty}
