@@ -30,12 +30,15 @@ def auth_error(err):
 def view_notes():
     return {}
     
-@view('note_edit')
-def note_edit(note_name):
+def _common_edit(note_name):
     vars = {'note_name': note_name}
     vars['note_content'] = notes.get_content(note_name) or ''
     return vars
-    
+
+note_edit = view('note_edit')(_common_edit)
+todo_edit = view('todo_edit')(_common_edit)
+
+
 def note_post(note_name):
     #import time; time.sleep(5)
     notes.put_content(note_name, request.forms.note_content)
