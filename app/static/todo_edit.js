@@ -136,50 +136,32 @@ var SaveStateLabel = function SaveStateLabel(_ref) {
 	);
 };
 
-var NoteContent = React.createClass({
-	displayName: 'NoteContent',
+var TodoList = React.createClass({
+	displayName: 'TodoList',
 
 	mixins: [React.addons.PureRenderMixin],
 
-	onChange: function onChange(evt) {
-		this.props.onChange(evt.target.value);
-	},
+	//onChange: function(evt) {this.props.onChange(evt.target.value)},
 
 	render: function render() {
-		return React.createElement('textarea', {
-			className: 'form-control',
-			id: 'note_content',
-			onChange: this.onChange,
-			value: this.props.text,
-			ref: 'noteContent'
-		});
-	},
-
-	componentDidUpdate: function componentDidUpdate() {
-		var elem = $(this.refs.noteContent);
-
-		// ugly but works well
-		/*elem.height("0px");
-  elem.height(elem.prop('scrollHeight'));
-  return;*/
-
-		// More optimized but buggy
-		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
-			var win = $(window);
-			var oldWinScroll = win.scrollTop();
-
-			elem.height("0px");
-			elem.height(elem.prop('scrollHeight'));
-			win.scrollTop(oldWinScroll);
-
-			//console.log(this._oldScrollHeight, " vs ", elem.prop('scrollHeight'));
-			this._oldScrollHeight = elem.prop('scrollHeight');
-		}
+		var result = function result(item) {
+			return React.createElement(
+				'li',
+				{ key: item.id },
+				item.toString()
+			);
+		};
+		return React.createElement(
+			'ul',
+			null,
+			this.props.items.map(result)
+		);
 	}
+
 });
 
 //$(document).ready(() => {
 $(window).on('load', function () {
-	window.todoApp = React.render(React.createElement(TodoApp, null), document.getElementById("todo_app"));
+	window.todoApp = ReactDOM.render(React.createElement(TodoApp, null), document.getElementById("todo_app"));
 });
 //# sourceMappingURL=todo_edit.js.map

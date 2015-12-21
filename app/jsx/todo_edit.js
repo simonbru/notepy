@@ -125,45 +125,21 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 };
 
 
-var NoteContent = React.createClass({
+var TodoList = React.createClass({
 	mixins: [React.addons.PureRenderMixin],
 
-	onChange: function(evt) {this.props.onChange(evt.target.value)},
+	//onChange: function(evt) {this.props.onChange(evt.target.value)},
 
 	render: function() {
-		return <textarea
-			className="form-control"
-			id="note_content"
-			onChange={this.onChange}
-			value={this.props.text}
-			ref="noteContent"
-			/>;
+		let result = (item) => <li key={item.id}>{item.toString()}</li>
+		return (
+			<ul>{this.props.items.map(result)}</ul>
+		);
 	},
 
-	componentDidUpdate: function() {
-		var elem = $(this.refs.noteContent);
-
-		// ugly but works well
-		/*elem.height("0px");
-		elem.height(elem.prop('scrollHeight'));
-		return;*/
-
-		// More optimized but buggy
-		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
-			var win = $(window);
-			var oldWinScroll = win.scrollTop();
-
-			elem.height("0px");
-			elem.height(elem.prop('scrollHeight'));
-			win.scrollTop(oldWinScroll);
-
-			//console.log(this._oldScrollHeight, " vs ", elem.prop('scrollHeight'));
-			this._oldScrollHeight = elem.prop('scrollHeight');
-		}
-	}
 });
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	window.todoApp = React.render(<TodoApp/>, document.getElementById("todo_app"));
+	window.todoApp = ReactDOM.render(<TodoApp/>, document.getElementById("todo_app"));
 });

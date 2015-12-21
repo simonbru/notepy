@@ -169,5 +169,5 @@ var NoteContent = React.createClass({
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	window.noteApp = React.render(<NoteApp/>, document.getElementById("note_app"));
+	window.noteApp = ReactDOM.render(<NoteApp/>, document.getElementById("note_app"));
 });
