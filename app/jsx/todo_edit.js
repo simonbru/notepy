@@ -164,10 +164,11 @@ var TodoItem = React.createClass({
 		let {id, isCompleted, onToggleComplete} = this.props;
 		onToggleComplete(id, !isCompleted);
 		evt.preventDefault();
+		evt.stopPropagation(); // do not call handleEdit
 	},
 
 	handleEdit: function(evt) {
-		console.log('asd');
+		console.log('edit');
 		evt.preventDefault();
 	},
 
@@ -175,12 +176,12 @@ var TodoItem = React.createClass({
 		let {text, isCompleted} = this.props;
 		let icon = isCompleted ? 'check' : 'unchecked';
 		return (
-			<button className="list-group-item todo-item"
+			<a href="#" className="list-group-item todo-item"
 					onClick={this.handleEdit}>
 				<Icon names={icon} className="item-checkbox"
 					onClick={this.handleComplete}/>
 				<p className={isCompleted && 'striked'}>{text}</p>
-			</button>
+			</a>
 		);
 	},
 })
