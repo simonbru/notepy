@@ -1,19 +1,20 @@
 var TodoApp = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
+	//mixins: [React.addons.PureRenderMixin],
 
 	getInitialState: function() {
 		return {
 			isSaving: false,
 			dirty: false,
-			todoList: new todotxt.TodoList()
+			todoItems: []
 		};
 	},
 
 	componentWillMount: function() {
 		$.get('/api/notes/'+note_name+'/get')
 		.success((data) => {
-			window.todoList = this.state.todoList;
-			todoList.parse(data.note_content);
+			window.gtodoList = this.todoList = new todotxt.TodoList();
+			this.todoList.parse(data.note_content);
+			this.setState({todoItems: this.todoList.items});
 		});
 
 		$(window).bind('keydown', (event) => {
@@ -51,10 +52,7 @@ var TodoApp = React.createClass({
 				dirty={this.state.dirty}
 			/>
 			<br/>
-			<NoteContent
-				text={this.state.textContent}
-				onChange={this.onTextChange}
-			/>
+			<TodoList items={this.state.todoItems} />
 		</form>
 		);
 	},
@@ -131,13 +129,31 @@ var TodoList = React.createClass({
 	//onChange: function(evt) {this.props.onChange(evt.target.value)},
 
 	render: function() {
-		let result = (item) => <li key={item.id}>{item.toString()}</li>
+		let result = (item) => (<TodoItem
+			key={item.id}
+			text={item.text}
+			isCompleted={item.isCompleted()} />
+		);
 		return (
 			<ul>{this.props.items.map(result)}</ul>
 		);
 	},
 
 });
+
+var TodoItem = React.createClass({
+	mixins: [React.addons.PureRenderMixin],
+
+	//onChange: function(evt) {this.props.onChange(evt.target.value)},
+
+	render: function() {
+		let {text, isCompleted} = this.props;
+		let content = isCompleted ? <s>{text}</s> : text;
+		return (
+			<li>{content}</li>
+		);
+	},
+})
 
 //$(document).ready(() => {
 $(window).on('load', () => {

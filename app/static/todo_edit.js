@@ -3,13 +3,13 @@
 var TodoApp = React.createClass({
 	displayName: 'TodoApp',
 
-	mixins: [React.addons.PureRenderMixin],
+	//mixins: [React.addons.PureRenderMixin],
 
 	getInitialState: function getInitialState() {
 		return {
 			isSaving: false,
 			dirty: false,
-			todoList: new todotxt.TodoList()
+			todoItems: []
 		};
 	},
 
@@ -17,8 +17,9 @@ var TodoApp = React.createClass({
 		var _this = this;
 
 		$.get('/api/notes/' + note_name + '/get').success(function (data) {
-			window.todoList = _this.state.todoList;
-			todoList.parse(data.note_content);
+			window.gtodoList = _this.todoList = new todotxt.TodoList();
+			_this.todoList.parse(data.note_content);
+			_this.setState({ todoItems: _this.todoList.items });
 		});
 
 		$(window).bind('keydown', function (event) {
@@ -56,10 +57,7 @@ var TodoApp = React.createClass({
 				dirty: this.state.dirty
 			}),
 			React.createElement('br', null),
-			React.createElement(NoteContent, {
-				text: this.state.textContent,
-				onChange: this.onTextChange
-			})
+			React.createElement(TodoList, { items: this.state.todoItems })
 		);
 	},
 
@@ -145,11 +143,10 @@ var TodoList = React.createClass({
 
 	render: function render() {
 		var result = function result(item) {
-			return React.createElement(
-				'li',
-				{ key: item.id },
-				item.toString()
-			);
+			return React.createElement(TodoItem, {
+				key: item.id,
+				text: item.text,
+				isCompleted: item.isCompleted() });
 		};
 		return React.createElement(
 			'ul',
@@ -158,6 +155,31 @@ var TodoList = React.createClass({
 		);
 	}
 
+});
+
+var TodoItem = React.createClass({
+	displayName: 'TodoItem',
+
+	mixins: [React.addons.PureRenderMixin],
+
+	//onChange: function(evt) {this.props.onChange(evt.target.value)},
+
+	render: function render() {
+		var _props = this.props;
+		var text = _props.text;
+		var isCompleted = _props.isCompleted;
+
+		var content = isCompleted ? React.createElement(
+			's',
+			null,
+			text
+		) : text;
+		return React.createElement(
+			'li',
+			null,
+			content
+		);
+	}
 });
 
 //$(document).ready(() => {
