@@ -135,7 +135,9 @@ var TodoList = React.createClass({
 			isCompleted={item.isCompleted()} />
 		);
 		return (
-			<ul>{this.props.items.map(result)}</ul>
+			<div className="list-group">
+				{this.props.items.map(result)}
+			</div>
 		);
 	},
 
@@ -149,11 +151,23 @@ var TodoItem = React.createClass({
 	render: function() {
 		let {text, isCompleted} = this.props;
 		let content = isCompleted ? <s>{text}</s> : text;
+		let icon = isCompleted ? 'check' : 'unchecked';
 		return (
-			<li>{content}</li>
+			<a href="#" className="list-group-item">
+				<Icon names={icon} />
+				{content}
+			</a>
 		);
 	},
 })
+
+var Icon = ({names, className}) => {
+	let classes = names.trim().split(' ').map((x) => 'glyphicon-' + x);
+	classes.push('glyphicon');
+	className && classes.push(className);
+	let finalClass = classes.join(' ');
+	return <span className={finalClass} aria-hidden="true"/>;
+}
 
 //$(document).ready(() => {
 $(window).on('load', () => {
