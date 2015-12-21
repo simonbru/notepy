@@ -160,21 +160,26 @@ var TodoList = React.createClass({
 var TodoItem = React.createClass({
 	mixins: [React.addons.PureRenderMixin],
 
-	handleClick: function(evt) {
+	handleComplete: function(evt) {
 		let {id, isCompleted, onToggleComplete} = this.props;
 		onToggleComplete(id, !isCompleted);
 		evt.preventDefault();
 	},
 
+	handleEdit: function(evt) {
+		console.log('asd');
+		evt.preventDefault();
+	},
+
 	render: function() {
 		let {text, isCompleted} = this.props;
-		let content = isCompleted ? <s>{text}</s> : text;
 		let icon = isCompleted ? 'check' : 'unchecked';
 		return (
-			<button className="list-group-item">
+			<button className="list-group-item todo-item"
+					onClick={this.handleEdit}>
 				<Icon names={icon} className="item-checkbox"
-					onClick={this.handleClick}/>
-				{content}
+					onClick={this.handleComplete}/>
+				<p className={isCompleted && 'striked'}>{text}</p>
 			</button>
 		);
 	},
