@@ -157,7 +157,10 @@ var todotxt = (function () {
     TodoItem.prototype.toString = function (with_id) {
         var date_str = function (date) {
             var month = date.getMonth() + 1;
-            return date.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + date.getDate();
+            var day = date.getDate();
+            return date.getFullYear() + '-'
+                + (month < 10 ? '0' : '') + month + '-'
+                + (day < 10 ? '0' : '') + day;
         };
 
         return (with_id ? this.id + ': ' : '') +
