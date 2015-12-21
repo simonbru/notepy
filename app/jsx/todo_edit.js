@@ -89,9 +89,10 @@ var TodoApp = React.createClass({
 			if(jqXHR) {
 				jqXHR.abort();
 			}
+			let textContent = this.todoList.toString();
 			this.setState({isSaving: true});
-			jqXHR = $.post('asdasd/api/notes/'+note_name+'/put',
-				$.param({note_content: this.state.textContent}))
+			jqXHR = $.post('/api/notes/'+note_name+'/put',
+				$.param({note_content: textContent}))
 			.done(() => {
 				this.setState({
 					dirty: false,
@@ -108,7 +109,7 @@ var TodoApp = React.createClass({
 				this.setState({
 					isSaving: false
 				});
-				// alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
 				console.log(xhr.responseText);
 			});
 		};
@@ -182,7 +183,7 @@ var TodoItem = React.createClass({
 var Icon = ({names, className, ...other}) => {
 	let classes = names.trim().split(' ').map((x) => 'glyphicon-' + x);
 	classes.push('glyphicon');
-	className && classes.push(className);
+	if (className) classes.push(className);
 	let finalClass = classes.join(' ');
 	return <span {...other} className={finalClass} aria-hidden="true"/>;
 }
