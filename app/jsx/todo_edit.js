@@ -1,5 +1,5 @@
 var TodoApp = React.createClass({
-	//mixins: [React.addons.PureRenderMixin],
+	mixins: [React.addons.PureRenderMixin],
 
 	getInitialState: function() {
 		return {
@@ -52,20 +52,31 @@ var TodoApp = React.createClass({
 				dirty={this.state.dirty}
 			/>
 			<br/>
-			<TodoList items={this.state.todoItems} />
+			<TodoList
+				items={this.state.todoItems}
+				onItemComplete={this.onItemComplete}
+			/>
 		</form>
 		);
 	},
 
-	onTextChange: function(text) {
-		this.setState({
-			textContent: text,
-			dirty: true
-		});
-		//Defer saving
+	deferSave: function() {
+		this.setState({dirty: true});
 		if (this.timeout)
 			clearTimeout(this.timeout);
 		this.timeout = setTimeout(() => this.save(), 1500);
+	},
+
+	onItemComplete: function(itemId, isCompleted) {
+		let todoItem = this.todoList.findById(itemId);
+		if (isCompleted) {
+			todoItem.complete();
+		} else {
+			todoItem.uncomplete();
+		}
+		this.deferSave();
+		// this.setState({todoItems: this.todoList.items});
+		this.forceUpdate();
 	},
 
 	save: (function() {
@@ -79,7 +90,7 @@ var TodoApp = React.createClass({
 				jqXHR.abort();
 			}
 			this.setState({isSaving: true});
-			jqXHR = $.post('/api/notes/'+note_name+'/put',
+			jqXHR = $.post('asdasd/api/notes/'+note_name+'/put',
 				$.param({note_content: this.state.textContent}))
 			.done(() => {
 				this.setState({
@@ -97,7 +108,7 @@ var TodoApp = React.createClass({
 				this.setState({
 					isSaving: false
 				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
+				// alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
 				console.log(xhr.responseText);
 			});
 		};
@@ -124,49 +135,56 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 
 
 var TodoList = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
-
-	//onChange: function(evt) {this.props.onChange(evt.target.value)},
+	// mixins: [React.addons.PureRenderMixin],
 
 	render: function() {
-		let result = (item) => (<TodoItem
+		let renderItem = (item) => (<TodoItem
 			key={item.id}
+			id={item.id}
 			text={item.text}
-			isCompleted={item.isCompleted()} />
+			isCompleted={item.isCompleted()}
+			onToggleComplete={this.props.onItemComplete} />
 		);
+
 		return (
 			<div className="list-group">
-				{this.props.items.map(result)}
+				{this.props.items.map(renderItem)}
 			</div>
 		);
 	},
 
 });
 
+
 var TodoItem = React.createClass({
 	mixins: [React.addons.PureRenderMixin],
 
-	//onChange: function(evt) {this.props.onChange(evt.target.value)},
+	handleClick: function(evt) {
+		let {id, isCompleted, onToggleComplete} = this.props;
+		onToggleComplete(id, !isCompleted);
+		evt.preventDefault();
+	},
 
 	render: function() {
 		let {text, isCompleted} = this.props;
 		let content = isCompleted ? <s>{text}</s> : text;
 		let icon = isCompleted ? 'check' : 'unchecked';
 		return (
-			<a href="#" className="list-group-item">
-				<Icon names={icon} />
+			<button className="list-group-item">
+				<Icon names={icon} className="item-checkbox"
+					onClick={this.handleClick}/>
 				{content}
-			</a>
+			</button>
 		);
 	},
 })
 
-var Icon = ({names, className}) => {
+var Icon = ({names, className, ...other}) => {
 	let classes = names.trim().split(' ').map((x) => 'glyphicon-' + x);
 	classes.push('glyphicon');
 	className && classes.push(className);
 	let finalClass = classes.join(' ');
-	return <span className={finalClass} aria-hidden="true"/>;
+	return <span {...other} className={finalClass} aria-hidden="true"/>;
 }
 
 //$(document).ready(() => {
