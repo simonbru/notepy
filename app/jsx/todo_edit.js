@@ -46,7 +46,7 @@ var TodoApp = React.createClass({
 
 	render: function() {
 		return (
-		<form id="todo_edit_form">
+		<div>
 			<SaveStateLabel
 				isSaving={this.state.isSaving}
 				dirty={this.state.dirty}
@@ -56,7 +56,7 @@ var TodoApp = React.createClass({
 				items={this.state.todoItems}
 				onItemComplete={this.onItemComplete}
 			/>
-		</form>
+		</div>
 		);
 	},
 
@@ -158,7 +158,21 @@ var TodoList = React.createClass({
 
 
 var TodoItem = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
+	mixins: [React.addons.PureRenderMixin,
+			 React.addons.LinkedStateMixin],
+
+	getInitialState: function() {
+		return {
+			text: this.props.text,
+			isEditing: false
+		};
+	},
+
+	componentDidUpdate: function() {
+		if (this.state.isEditing) {
+			$(this.refs.input).focus();
+		}
+	},
 
 	handleComplete: function(evt) {
 		let {id, isCompleted, onToggleComplete} = this.props;
@@ -169,18 +183,52 @@ var TodoItem = React.createClass({
 
 	handleEdit: function(evt) {
 		console.log('edit');
+		this.setState({isEditing: true});
+		evt.preventDefault();
+	},
+
+	keytest: function(evt) {
+		console.log('trigger: change');
+		this.setState({
+			text: this.refs.input.value,
+			isEditing: false
+		});
 		evt.preventDefault();
 	},
 
 	render: function() {
-		let {text, isCompleted} = this.props;
+		let {isCompleted} = this.props;
+		let {text, isEditing} = this.state;
 		let icon = isCompleted ? 'check' : 'unchecked';
+
+		let textContainer;
+		if (isEditing) {
+			textContainer = (
+				<form onSubmit={this.keytest}>
+					<input
+						onBlur={this.keytest}
+						ref="input"
+						valueLink={this.linkState('text')}
+						/>
+				</form>;
+			);
+		} else {
+			textContainer = <p className={isCompleted && 'striked'}>{text}</p>;
+		}
+
 		return (
-			<a href="#" className="list-group-item todo-item"
-					onClick={this.handleEdit}>
-				<Icon names={icon} className="item-checkbox"
+			<a
+				href="#"
+				className="list-group-item todo-item"
+				onClick={this.handleEdit}
+				>
+
+				<Icon
+					names={icon}
+					className="item-checkbox"
 					onClick={this.handleComplete}/>
-				<p className={isCompleted && 'striked'}>{text}</p>
+				{textContainer}
+
 			</a>
 		);
 	},
