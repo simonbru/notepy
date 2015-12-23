@@ -55,6 +55,7 @@ var TodoApp = React.createClass({
 			<TodoList
 				items={this.state.todoItems}
 				onItemComplete={this.onItemComplete}
+				onItemTextChange={this.onItemTextChange}
 			/>
 		</div>
 		);
@@ -77,6 +78,14 @@ var TodoApp = React.createClass({
 		this.deferSave();
 		// this.setState({todoItems: this.todoList.items});
 		this.forceUpdate();
+	},
+
+	onItemTextChange: function(itemId, text) {
+		let todoItem = this.todoList.findById(itemId);
+		if (todoItem.text != text) {
+			todoItem.text = text;
+			this.save();
+		}
 	},
 
 	save: (function() {
@@ -144,7 +153,8 @@ var TodoList = React.createClass({
 			id={item.id}
 			text={item.text}
 			isCompleted={item.isCompleted()}
-			onToggleComplete={this.props.onItemComplete} />
+			onToggleComplete={this.props.onItemComplete}
+			onTextChange={this.props.onItemTextChange} />
 		);
 
 		return (
@@ -187,12 +197,15 @@ var TodoItem = React.createClass({
 		evt.preventDefault();
 	},
 
-	keytest: function(evt) {
+	handleSubmit: function(evt) {
 		console.log('trigger: change');
+		let text = this.refs.input.value;
 		this.setState({
-			text: this.refs.input.value,
+			text,
 			isEditing: false
 		});
+		let {id, onTextChange} = this.props;
+		onTextChange(id, text);
 		evt.preventDefault();
 	},
 
@@ -204,13 +217,13 @@ var TodoItem = React.createClass({
 		let textContainer;
 		if (isEditing) {
 			textContainer = (
-				<form onSubmit={this.keytest}>
+				<form onSubmit={this.handleSubmit}>
 					<input
-						onBlur={this.keytest}
+						onBlur={this.handleSubmit}
 						ref="input"
 						valueLink={this.linkState('text')}
 						/>
-				</form>;
+				</form>
 			);
 		} else {
 			textContainer = <p className={isCompleted && 'striked'}>{text}</p>;
@@ -221,6 +234,7 @@ var TodoItem = React.createClass({
 				href="#"
 				className="list-group-item todo-item"
 				onClick={this.handleEdit}
+				ref="container"
 				>
 
 				<Icon

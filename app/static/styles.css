@@ -35,3 +35,15 @@ div.container {
     display: inline-block;
     margin: 0px;
 }
+
+#todo_app .todo-item form {
+    display: inline;
+    /*position: absolute;*/
+    /*left: 45px;*/
+}
+
+#todo_app .todo-item input {
+    padding: 0px;
+    /*width: 100%;*/
+    width: calc(100% - 30px);
+}
