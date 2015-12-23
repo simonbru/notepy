@@ -200,10 +200,11 @@ var TodoItem = React.createClass({
 	handleSubmit: function(evt) {
 		console.log('trigger: change');
 		let text = this.refs.input.value;
-		this.setState({
-			text,
-			isEditing: false
-		});
+		this.setState({text});
+		// Hack to avoid Firefox getting back into editing when
+		// pressing "Enter".
+		setTimeout(() => this.setState({isEditing: false}), 0);
+
 		let {id, onTextChange} = this.props;
 		onTextChange(id, text);
 		evt.preventDefault();
