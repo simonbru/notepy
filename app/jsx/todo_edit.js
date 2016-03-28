@@ -1,10 +1,12 @@
 var TodoApp = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
+	// mixins: [React.addons.PureRenderMixin],
+	// Not pure because we keep the same todoItems list when we add/remove items
 
 	getInitialState: function() {
 		return {
 			isSaving: false,
 			dirty: false,
+			editing: null,
 			todoItems: []
 		};
 	},
@@ -54,8 +56,10 @@ var TodoApp = React.createClass({
 			<br/>
 			<TodoList
 				items={this.state.todoItems}
+				editing={this.state.editing}
 				onItemComplete={this.onItemComplete}
 				onItemTextChange={this.onItemTextChange}
+				onItemEdit={this.onItemEdit}
 			/>
 		</div>
 		);
@@ -86,6 +90,17 @@ var TodoApp = React.createClass({
 			todoItem.text = text;
 			this.save();
 		}
+		this.setState({editing: null})
+	},
+
+	onItemEdit: function(itemId) {
+		this.setState({editing: itemId});
+	},
+
+	newTask: function() {
+		var task = this.todoList.add("EMPTY");
+		task.text = ""; // Hack
+		this.setState({editing: task.id});
 	},
 
 	save: (function() {
@@ -152,7 +167,9 @@ var TodoList = React.createClass({
 			key={item.id}
 			id={item.id}
 			text={item.text}
+			isEditing={item.id === this.props.editing}
 			isCompleted={item.isCompleted()}
+			onEdit={this.props.onItemEdit}
 			onToggleComplete={this.props.onItemComplete}
 			onTextChange={this.props.onItemTextChange} />
 		);
@@ -173,15 +190,18 @@ var TodoItem = React.createClass({
 
 	getInitialState: function() {
 		return {
-			text: this.props.text,
-			isEditing: false
+			text: this.props.text
 		};
 	},
 
 	componentDidUpdate: function() {
-		if (this.state.isEditing) {
+		if (this.props.isEditing) {
 			$(this.refs.input).focus();
 		}
+	},
+
+	componentDidMount: function() {
+		this.componentDidUpdate();
 	},
 
 	handleComplete: function(evt) {
@@ -193,26 +213,24 @@ var TodoItem = React.createClass({
 
 	handleEdit: function(evt) {
 		console.log('edit');
-		this.setState({isEditing: true});
+		this.props.onEdit(this.props.id);
 		evt.preventDefault();
 	},
 
 	handleSubmit: function(evt) {
 		console.log('trigger: change');
-		let text = this.refs.input.value;
-		this.setState({text});
 		// Hack to avoid Firefox getting back into editing when
 		// pressing "Enter".
-		setTimeout(() => this.setState({isEditing: false}), 0);
+		// setTimeout(() => this.setState({isEditing: false}), 0);
 
 		let {id, onTextChange} = this.props;
-		onTextChange(id, text);
+		onTextChange(id, this.state.text);
 		evt.preventDefault();
 	},
 
 	render: function() {
-		let {isCompleted} = this.props;
-		let {text, isEditing} = this.state;
+		let {isCompleted, isEditing} = this.props;
+		let {text} = this.state;
 		let icon = isCompleted ? 'check' : 'unchecked';
 
 		let textContainer;
