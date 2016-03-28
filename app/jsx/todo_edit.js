@@ -231,7 +231,7 @@ var TodoItem = React.createClass({
 		}
 
 		return (
-			<a
+			<li
 				href="#"
 				className="list-group-item todo-item"
 				onClick={this.handleEdit}
@@ -244,7 +244,7 @@ var TodoItem = React.createClass({
 					onClick={this.handleComplete}/>
 				{textContainer}
 
-			</a>
+			</li>
 		);
 	},
 })
