@@ -3,11 +3,11 @@ div.container {
     padding-right:8px;
 }
 
-/* note_edit */
-
-#note_edit_form {
-    margin-bottom: 300px;
+body > div.container {
+    margin-bottom: 80px;
 }
+
+/* note_edit */
 
 #note_edit_form > #note_content {
     overflow: hidden;

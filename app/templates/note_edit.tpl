@@ -8,7 +8,9 @@
 window.note_name = '{{note_name}}';
 </script>
 <h2>{{note_name}}
-    <button class="btn btn-primary pull-right" onclick="noteApp.save()">Sauvegarder</button>
+    <button class="btn btn-primary pull-right" onclick="todoApp.save()">
+        <span class="glyphicon glyphicon-floppy-disk"></span> Sauvegarder
+    </button>
 </h2>
 <div id="note_app"></div>
 % if conf.DEVMODE:
