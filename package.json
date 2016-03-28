@@ -2,7 +2,8 @@
   "name": "notepy",
   "version": "0.0.0",
   "scripts": {
-    "build": "babel -h"
+    "build": "cd app; babel -d static jsx -s",
+    "watch": "cd app; babel -w -d static jsx -s"
   },
   "repository": {
     "type": "git",
