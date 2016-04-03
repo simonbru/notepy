@@ -86,10 +86,16 @@ var TodoApp = React.createClass({
 
 	onItemTextChange: function(itemId, text) {
 		let todoItem = this.todoList.findById(itemId);
-		if (todoItem.text != text) {
+		text = text.trim();
+
+		if (text.length == 0) {
+			this.todoList.remove(itemId);
+			this.save();
+		} else if (todoItem.text != text) {
 			todoItem.text = text;
 			this.save();
 		}
+
 		this.setState({editing: null})
 	},
 
