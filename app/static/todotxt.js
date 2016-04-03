@@ -215,6 +215,12 @@ var todotxt = (function () {
         };
         // Filename, or false for in-memory
         this.filename = false;
+
+        var _nextId = 0;
+        this.nextId = function() {
+            _nextId++;
+            return _nextId;
+        }
     }
 
     /**
@@ -231,15 +237,15 @@ var todotxt = (function () {
         if (null === item.text || item.text.length === 0) {
             return false;
         }
+        item.id = this.nextId();
 
-        var id = this.items.push(item);
-        this.items[id - 1].id = id;
-        this.indexes.id[id] = id - 1;
-        this.index(this.items[id - 1]);
+        var itemPosition = this.items.push(item) - 1;
+        this.indexes.id[item.id] = itemPosition;
+        this.index(item);
 
         //this.sort();
 
-        return this.items[this.indexes.id[id]];
+        return item;
     };
     
     /**
