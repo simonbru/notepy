@@ -267,7 +267,7 @@ var TodoItem = React.createClass({
 
 		let trashIcon = <Icon
 			names="trash"
-			className="item-trash pull-right text-warning"
+			className="item-trash pull-right text-danger"
 			onClick={this.handleDelete}
 			/>;
 
