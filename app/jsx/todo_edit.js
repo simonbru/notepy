@@ -12,12 +12,9 @@ var TodoApp = React.createClass({
 	},
 
 	componentWillMount: function() {
-		$.get('/api/notes/'+note_name+'/get')
-		.success((data) => {
-			window.gtodoList = this.todoList = new todotxt.TodoList();
-			this.todoList.parse(data.note_content);
-			this.setState({todoItems: this.todoList.items});
-		});
+		window.gtodoList = this.todoList = new todotxt.TodoList();
+		this.todoList.parse(this.props.data);
+		this.setState({todoItems: this.todoList.items});
 
 		$(window).bind('keydown', (event) => {
 			if (event.ctrlKey || event.metaKey) {
@@ -267,13 +264,12 @@ var TodoItem = React.createClass({
 
 		let trashIcon = <Icon
 			names="trash"
-			className="item-trash pull-right text-danger"
+			className="item-trash pull-right text-warning"
 			onClick={this.handleDelete}
 			/>;
 
 		return (
 			<li
-				href="#"
 				className="list-group-item todo-item"
 				onClick={this.handleEdit}
 				ref="container"
@@ -300,5 +296,9 @@ var Icon = ({names, className, ...other}) => {
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	window.todoApp = ReactDOM.render(<TodoApp/>, document.getElementById("todo_app"));
+	$.get('/api/notes/'+note_name+'/get')
+	.success((data) => {
+		var todoDiv = document.getElementById("todo_app");
+		window.todoApp = ReactDOM.render(<TodoApp data={data.note_content}/>, todoDiv);
+	});
 });
