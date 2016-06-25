@@ -61,6 +61,10 @@ var TodoApp = React.createClass({
 				onItemTextChange={this.onItemTextChange}
 				onItemEdit={this.onItemEdit}
 			/>
+			<SaveStateLabel
+				isSaving={this.state.isSaving}
+				dirty={this.state.dirty}
+			/>
 		</div>
 		);
 	},
