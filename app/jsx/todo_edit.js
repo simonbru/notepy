@@ -227,6 +227,13 @@ var TodoItem = React.createClass({
 		evt.preventDefault();
 	},
 
+	handleDelete: function(evt) {
+		let {id, onTextChange} = this.props;
+		onTextChange(id, '');
+		evt.preventDefault();
+		evt.stopPropagation(); // do not call handleEdit
+	},
+
 	handleSubmit: function(evt) {
 		console.log('trigger: change');
 		// Hack to avoid Firefox getting back into editing when
@@ -258,6 +265,12 @@ var TodoItem = React.createClass({
 			textContainer = <p className={isCompleted && 'striked'}>{text}</p>;
 		}
 
+		let trashIcon = <Icon
+			names="trash"
+			className="item-trash pull-right text-warning"
+			onClick={this.handleDelete}
+			/>;
+
 		return (
 			<li
 				href="#"
@@ -270,8 +283,8 @@ var TodoItem = React.createClass({
 					names={icon}
 					className="item-checkbox"
 					onClick={this.handleComplete}/>
+				{isEditing ? null : trashIcon}
 				{textContainer}
-
 			</li>
 		);
 	},
