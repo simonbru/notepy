@@ -27,12 +27,14 @@ body > div.container {
 #todo_app .list-group-item .item-checkbox {
     /* Cancel padding of list-group-item in order to make the whole area
        around the checkbox clickable (and not only the checkbox itself) */
+    cursor: pointer;
     padding: 14px 15px;
     margin: -11px 0px -11px -15px;
 }
 
 #todo_app .list-group-item .item-trash {
     /* Same idea as for item-checkbox */
+    cursor: pointer;
     padding: 14px 15px;
     margin: -11px -15px -11px 0px;
 }
