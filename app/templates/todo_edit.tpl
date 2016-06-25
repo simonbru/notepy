@@ -1,5 +1,4 @@
 % include("header", title="Todo")
-% import re
 % import config as conf
 
 <div>
@@ -21,14 +20,14 @@ window.note_name = '{{note_name}}';
 <div id="todo_app">
     <br>
     <div class="list-group">
-        % for line in note_content.split('\n'):
-        % icon = 'check' if line.startswith('x ') else 'unchecked'
-        % item = re.sub(r'x \d{4}-\d{2}-\d{2} ', '', line)
+    % for item in items:
+        % icon = 'check' if item['complete'] else 'unchecked'
+        % p_class = item['complete'] and 'striked'
         <li class="list-group-item todo-item">
             <span class="glyphicon-{{icon}} glyphicon item-checkbox"></span>
-            <p>{{item}}</p>
+            <p class="{{p_class}}">{{item['text']}}</p>
         </li>
-        % end
+    % end
     </div>
 </div>
 <button class="btn btn-primary" onclick="todoApp.newTask()">

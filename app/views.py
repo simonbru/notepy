@@ -1,3 +1,5 @@
+import re
+
 from bottle import view, request, error, redirect
 
 import notes
@@ -29,14 +31,27 @@ def auth_error(err):
 @view('notes')
 def view_notes():
     return {}
-    
-def _common_edit(note_name):
+
+
+@view('note_edit')
+def note_edit(note_name):
     vars = {'note_name': note_name}
     vars['note_content'] = notes.get_content(note_name) or ''
     return vars
 
-note_edit = view('note_edit')(_common_edit)
-todo_edit = view('todo_edit')(_common_edit)
+
+@view('todo_edit')
+def todo_edit(note_name):
+    vars = {'note_name': note_name}
+    note_content = notes.get_content(note_name) or ''
+    vars['items'] = []
+    for line in note_content.split('\n'):
+        item = {}
+        item['complete'] = line.startswith('x ')
+        # Remove e.g. 'x 2015-02-02 '
+        item['text'] = re.sub(r'^x \d{4}-\d{2}-\d{2} ', '', line)
+        vars['items'].append(item)
+    return vars
 
 
 def note_post(note_name):
