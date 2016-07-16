@@ -1,16 +1,19 @@
-var NoteApp = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
+function shallowCompare(nextProps, nextState) {
+	return React.addons.shallowCompare(this, nextProps, nextState);
+}
 
-	getInitialState: function() {
-		return {
-			isSaving: false,
-			dirty: false,
-			textContent: "",
-			lastSaved: Date.now()
-		};
-	},
+class NoteApp extends React.Component {
 
-	componentWillMount: function() {
+	shouldComponentUpdate = shallowCompare
+
+	state = {
+		isSaving: false,
+		dirty: false,
+		textContent: "",
+		lastSaved: Date.now()
+	}
+
+	componentWillMount() {
 		$.get('/api/notes/'+note_name+'/get')
 		.success((data) => {
 			if (data.note_content.length == 0)
@@ -45,9 +48,9 @@ var NoteApp = React.createClass({
 			}
 			return message;
 		});
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 		<form id="note_edit_form">
 			<SaveStateLabel
@@ -57,13 +60,13 @@ var NoteApp = React.createClass({
 			<br/>
 			<NoteContent
 				text={this.state.textContent}
-				onChange={this.onTextChange}
+				onChange={::this.onTextChange}
 			/>
 		</form>
 		);
-	},
+	}
 
-	onTextChange: function(text) {
+	onTextChange(text) {
 		this.setState({
 			textContent: text,
 			dirty: true
@@ -72,12 +75,12 @@ var NoteApp = React.createClass({
 		if (this.timeout)
 			clearTimeout(this.timeout);
 		this.timeout = setTimeout(() => this.save(), 1500);
-	},
+	}
 
-	save: (function() {
+	save = (() => {
 		// Put jqXHR in a closure
 		var jqXHR;
-		return function() {
+		return () => {
 			console.log("save");
 			clearTimeout(this.timeout);
 			// Abort previous saving request
@@ -108,7 +111,7 @@ var NoteApp = React.createClass({
 			});
 		};
 	})()
-});
+}
 
 
 var SaveStateLabel = ({isSaving, dirty}) => {
@@ -129,22 +132,23 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 };
 
 
-var NoteContent = React.createClass({
-	mixins: [React.addons.PureRenderMixin],
+class NoteContent extends React.Component {
 
-	onChange: function(evt) {this.props.onChange(evt.target.value)},
+	shouldComponentUpdate = shallowCompare
 
-	render: function() {
+	onChange(evt) {this.props.onChange(evt.target.value)}
+
+	render() {
 		return <textarea
 			className="form-control"
 			id="note_content"
-			onChange={this.onChange}
+			onChange={::this.onChange}
 			value={this.props.text}
 			ref="noteContent"
 			/>;
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		var elem = $(this.refs.noteContent);
 
 		// ugly but works well
@@ -165,7 +169,7 @@ var NoteContent = React.createClass({
 			this._oldScrollHeight = elem.prop('scrollHeight');
 		}
 	}
-});
+}
 
 //$(document).ready(() => {
 $(window).on('load', () => {
