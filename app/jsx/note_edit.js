@@ -2,6 +2,7 @@ function shallowCompare(nextProps, nextState) {
 	return React.addons.shallowCompare(this, nextProps, nextState);
 }
 
+
 class NoteApp extends React.Component {
 
 	shouldComponentUpdate = shallowCompare
@@ -9,20 +10,11 @@ class NoteApp extends React.Component {
 	state = {
 		isSaving: false,
 		dirty: false,
-		textContent: "",
+		textContent: this.props.textContent,
 		lastSaved: Date.now()
 	}
 
 	componentWillMount() {
-		$.get('/api/notes/'+note_name+'/get')
-		.success((data) => {
-			if (data.note_content.length == 0)
-				return;
-			this.setState({
-				textContent: data.note_content,
-			});
-		});
-
 		$(window).bind('keydown', (event) => {
 			if (event.ctrlKey || event.metaKey) {
 				switch (String.fromCharCode(event.which).toLowerCase()) {
@@ -169,9 +161,15 @@ class NoteContent extends React.Component {
 			this._oldScrollHeight = elem.prop('scrollHeight');
 		}
 	}
+
+	componentDidMount = ::this.componentDidUpdate
 }
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	window.noteApp = ReactDOM.render(<NoteApp/>, document.getElementById("note_app"));
+	$.get('/api/notes/'+note_name+'/get')
+	.success((data) => {
+		var noteDiv = document.getElementById("note_app");
+		window.noteApp = ReactDOM.render(<NoteApp textContent={data.note_content}/>, noteDiv);
+	});
 });
