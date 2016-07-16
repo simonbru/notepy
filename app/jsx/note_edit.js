@@ -131,40 +131,18 @@ class NoteContent extends React.Component {
 	onChange(evt) {this.props.onChange(evt.target.value)}
 
 	render() {
+		let nbLines = this.props.text.split('\n').length + 1;
 		return <textarea
 			className="form-control"
 			id="note_content"
 			onChange={::this.onChange}
 			value={this.props.text}
+			rows={nbLines}
 			ref="noteContent"
 			/>;
 	}
-
-	componentWillUpdate() {
-		this._oldScrollPosition = $(window).scrollTop();
-	}
-	componentWillMount = this.componentWillUpdate
-
-	componentDidUpdate() {
-		let elem = $(this.refs.noteContent);
-
-		// ugly but works well
-		/*elem.height("0px");
-		elem.height(elem.prop('scrollHeight'));
-		return;*/
-
-		// More optimized but buggy
-		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
-			elem.height("0px");
-			elem.height(elem.prop('scrollHeight'));
-			$(window).scrollTop(this._oldScrollPosition);
-
-			//console.log(this._oldScrollHeight, " vs ", elem.prop('scrollHeight'));
-			this._oldScrollHeight = elem.prop('scrollHeight');
-		}
-	}
-	componentDidMount = this.componentDidUpdate
 }
+
 
 //$(document).ready(() => {
 $(window).on('load', () => {
