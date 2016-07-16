@@ -140,8 +140,13 @@ class NoteContent extends React.Component {
 			/>;
 	}
 
+	componentWillUpdate() {
+		this._oldScrollPosition = $(window).scrollTop();
+	}
+	componentWillMount = this.componentWillUpdate
+
 	componentDidUpdate() {
-		var elem = $(this.refs.noteContent);
+		let elem = $(this.refs.noteContent);
 
 		// ugly but works well
 		/*elem.height("0px");
@@ -150,19 +155,15 @@ class NoteContent extends React.Component {
 
 		// More optimized but buggy
 		if (this._oldScrollHeight != elem.prop('scrollHeight')) {
-			var win = $(window);
-			var oldWinScroll = win.scrollTop();
-
 			elem.height("0px");
 			elem.height(elem.prop('scrollHeight'));
-			win.scrollTop(oldWinScroll);
+			$(window).scrollTop(this._oldScrollPosition);
 
 			//console.log(this._oldScrollHeight, " vs ", elem.prop('scrollHeight'));
 			this._oldScrollHeight = elem.prop('scrollHeight');
 		}
 	}
-
-	componentDidMount = ::this.componentDidUpdate
+	componentDidMount = this.componentDidUpdate
 }
 
 //$(document).ready(() => {
