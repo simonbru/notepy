@@ -1,17 +1,19 @@
-var TodoApp = React.createClass({
+function shallowCompare(nextProps, nextState) {
+	return React.addons.shallowCompare(this, nextProps, nextState);
+}
+
+class TodoApp extends React.Component {
 	// mixins: [React.addons.PureRenderMixin],
 	// Not pure because we keep the same todoItems list when we add/remove items
 
-	getInitialState: function() {
-		return {
-			isSaving: false,
-			dirty: false,
-			editing: null,
-			todoItems: []
-		};
-	},
+	state = {
+		isSaving: false,
+		dirty: false,
+		editing: null,
+		todoItems: []
+	}
 
-	componentWillMount: function() {
+	componentWillMount() {
 		window.gtodoList = this.todoList = new todotxt.TodoList();
 		this.todoList.parse(this.props.data);
 		this.setState({todoItems: this.todoList.items});
@@ -41,9 +43,9 @@ var TodoApp = React.createClass({
 			}
 			return message;
 		});
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 		<div>
 			<SaveStateLabel
@@ -54,9 +56,9 @@ var TodoApp = React.createClass({
 			<TodoList
 				items={this.state.todoItems}
 				editing={this.state.editing}
-				onItemComplete={this.onItemComplete}
-				onItemTextChange={this.onItemTextChange}
-				onItemEdit={this.onItemEdit}
+				onItemComplete={::this.onItemComplete}
+				onItemTextChange={::this.onItemTextChange}
+				onItemEdit={::this.onItemEdit}
 			/>
 			<SaveStateLabel
 				isSaving={this.state.isSaving}
@@ -64,16 +66,16 @@ var TodoApp = React.createClass({
 			/>
 		</div>
 		);
-	},
+	}
 
-	deferSave: function() {
+	deferSave() {
 		this.setState({dirty: true});
 		if (this.timeout)
 			clearTimeout(this.timeout);
 		this.timeout = setTimeout(() => this.save(), 1500);
-	},
+	}
 
-	onItemComplete: function(itemId, isCompleted) {
+	onItemComplete(itemId, isCompleted) {
 		let todoItem = this.todoList.findById(itemId);
 		if (isCompleted) {
 			todoItem.complete();
@@ -83,9 +85,9 @@ var TodoApp = React.createClass({
 		this.deferSave();
 		// this.setState({todoItems: this.todoList.items});
 		this.forceUpdate();
-	},
+	}
 
-	onItemTextChange: function(itemId, text) {
+	onItemTextChange(itemId, text) {
 		let todoItem = this.todoList.findById(itemId);
 		text = text.trim();
 
@@ -98,19 +100,19 @@ var TodoApp = React.createClass({
 		}
 
 		this.setState({editing: null})
-	},
+	}
 
-	onItemEdit: function(itemId) {
+	onItemEdit(itemId) {
 		this.setState({editing: itemId});
-	},
+	}
 
-	newTask: function() {
+	newTask() {
 		var task = this.todoList.add("EMPTY");
 		task.text = ""; // Hack
 		this.setState({editing: task.id});
-	},
+	}
 
-	save: (function() {
+	save = (function() {
 		// Put jqXHR in a closure
 		var jqXHR;
 		return function() {
@@ -145,7 +147,7 @@ var TodoApp = React.createClass({
 			});
 		};
 	})()
-});
+}
 
 
 var SaveStateLabel = ({isSaving, dirty}) => {
@@ -166,19 +168,19 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 };
 
 
-var TodoList = React.createClass({
-	// mixins: [React.addons.PureRenderMixin],
+class TodoList extends React.Component {
+	// shouldComponentUpdate = shallowCompare
 
-	render: function() {
+	render() {
 		let renderItem = (item) => (<TodoItem
 			key={item.id}
 			id={item.id}
 			text={item.text}
 			isEditing={item.id === this.props.editing}
 			isCompleted={item.isCompleted()}
-			onEdit={this.props.onItemEdit}
-			onToggleComplete={this.props.onItemComplete}
-			onTextChange={this.props.onItemTextChange} />
+			onEdit={::this.props.onItemEdit}
+			onToggleComplete={::this.props.onItemComplete}
+			onTextChange={::this.props.onItemTextChange} />
 		);
 
 		return (
@@ -186,63 +188,64 @@ var TodoList = React.createClass({
 				{this.props.items.map(renderItem)}
 			</div>
 		);
-	},
+	}
+}
 
-});
 
+class TodoItem extends React.Component {
 
-var TodoItem = React.createClass({
-	mixins: [React.addons.PureRenderMixin,
-			 React.addons.LinkedStateMixin],
+	shouldComponentUpdate = shallowCompare
 
-	getInitialState: function() {
-		return {
-			text: this.props.text
-		};
-	},
+	state = {
+		text: this.props.text
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if (this.props.isEditing) {
 			$(this.refs.input).focus();
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.componentDidUpdate();
-	},
+	}
 
-	handleComplete: function(evt) {
+	handleComplete(evt) {
 		let {id, isCompleted, onToggleComplete} = this.props;
 		onToggleComplete(id, !isCompleted);
 		evt.preventDefault();
 		evt.stopPropagation(); // do not call handleEdit
-	},
+	}
 
-	handleEdit: function(evt) {
+	handleEdit(evt) {
 		console.log('edit');
 		this.props.onEdit(this.props.id);
 		evt.preventDefault();
-	},
+	}
 
-	handleDelete: function(evt) {
+	handleDelete(evt) {
 		let {id, onTextChange} = this.props;
-		onTextChange(id, '');
+		this::onTextChange(id, '');
 		evt.preventDefault();
 		evt.stopPropagation(); // do not call handleEdit
-	},
+	}
 
-	handleSubmit: function(evt) {
+	handleSubmit(evt) {
 		console.log('trigger: change');
 		// Hack to avoid Firefox getting back into editing when
 		// pressing "Enter".
 		// setTimeout(() => this.setState({isEditing: false}), 0);
 
 		let {id, onTextChange} = this.props;
-		onTextChange(id, this.state.text);
+		this::onTextChange(id, this.state.text);
 		evt.preventDefault();
-	},
+	}
 
-	render: function() {
+	handleChange(evt) {
+		this.setState({text: evt.target.value});
+	}
+
+	render() {
 		let {isCompleted, isEditing} = this.props;
 		let {text} = this.state;
 		let icon = isCompleted ? 'check' : 'unchecked';
@@ -250,11 +253,12 @@ var TodoItem = React.createClass({
 		let textContainer;
 		if (isEditing) {
 			textContainer = (
-				<form onSubmit={this.handleSubmit}>
+				<form onSubmit={::this.handleSubmit}>
 					<input
-						onBlur={this.handleSubmit}
+						onBlur={::this.handleSubmit}
 						ref="input"
-						valueLink={this.linkState('text')}
+						value={this.state.text}
+						onChange={::this.handleChange}
 						/>
 				</form>
 			);
@@ -265,26 +269,26 @@ var TodoItem = React.createClass({
 		let trashIcon = <Icon
 			names="trash"
 			className="item-trash pull-right text-danger"
-			onClick={this.handleDelete}
+			onClick={::this.handleDelete}
 			/>;
 
 		return (
 			<li
 				className="list-group-item todo-item"
-				onClick={this.handleEdit}
+				onClick={::this.handleEdit}
 				ref="container"
 				>
 
 				<Icon
 					names={icon}
 					className="item-checkbox"
-					onClick={this.handleComplete}/>
+					onClick={::this.handleComplete}/>
 				{isEditing ? null : trashIcon}
 				{textContainer}
 			</li>
 		);
-	},
-})
+	}
+}
 
 var Icon = ({names, className, ...other}) => {
 	let classes = names.trim().split(' ').map((x) => 'glyphicon-' + x);
