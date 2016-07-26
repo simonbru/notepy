@@ -126,6 +126,8 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 
 class NoteContent extends React.Component {
 
+	static defaultProps = {text: ''}
+
 	shouldComponentUpdate = shallowCompare
 
 	onChange(evt) {this.props.onChange(evt.target.value)}
@@ -149,6 +151,7 @@ $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
 	.success((data) => {
 		var noteDiv = document.getElementById("note_app");
-		window.noteApp = ReactDOM.render(<NoteApp textContent={data.note_content}/>, noteDiv);
+		var noteText = data.note_content || '';
+		window.noteApp = ReactDOM.render(<NoteApp textContent={noteText}/>, noteDiv);
 	});
 });

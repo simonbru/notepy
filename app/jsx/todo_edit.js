@@ -303,6 +303,7 @@ $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
 	.success((data) => {
 		var todoDiv = document.getElementById("todo_app");
-		window.todoApp = ReactDOM.render(<TodoApp data={data.note_content}/>, todoDiv);
+		var noteText = data.note_content || '';
+		window.todoApp = ReactDOM.render(<TodoApp data={noteText}/>, todoDiv);
 	});
 });
