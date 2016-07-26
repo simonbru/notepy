@@ -4,7 +4,7 @@
   "scripts": {
     "build": "cd app; babel -d static jsx -s",
     "watch": "cd app; babel -w -d static jsx -s",
-    "server": "cd app; ./app.py"
+    "start": "cd app; ./app.py"
   },
   "repository": {
     "type": "git",
