@@ -49,6 +49,10 @@ body > div.container {
 #todo_app .todo-item p {
     display: inline-block;
     margin: 0px;
+
+    /* Break very long word if needed */
+    overflow-wrap: break-word;
+    word-break: break-word; /* non-standard but works in chrome */
 }
 
 #todo_app .todo-item form {
