@@ -4,21 +4,25 @@
 
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
     <title>Notepy - {{title}}</title>
     <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
+
     <!-- Bootstrap -->
     % if conf.DEVMODE:
-    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+      <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     % else:
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     %end
 
     <link href="/static/styles.css" rel="stylesheet">
     % if request.urlparts.path == '/login':
-    <style>
+      <style>
         body {
           padding-top: 40px;
           padding-bottom: 40px;
@@ -36,49 +40,52 @@
         .form-signin input {
           margin-bottom: 10px;
         }
-    </style>
+      </style>
     % end
 
     % if conf.DEVMODE:
-    <script src="/static/jquery-2.1.4.js"></script>
-    <script src="/static/bootstrap/js/bootstrap.js"></script>
+      <script src="/static/jquery-2.1.4.js"></script>
+      <script src="/static/bootstrap/js/bootstrap.js"></script>
     % else:
-    <script src="/static/jquery-2.1.4.min.js"></script>
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+      <script src="/static/jquery-2.1.4.min.js"></script>
+      <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     %end
-</head>
-<body>
-% if s['auth'] == True:
-<div class="navbar navbar-inverse" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Notepy</a>
-    </div>
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
-        %links = [
-        %    ('/n/', 'Bloc-notes')
-        %]
-        %for url, name in links:
-        %    if request.urlparts.path.startswith(url):
+
+  </head>
+  <body>
+    % if s['auth'] == True:
+      <div class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Notepy</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              %links = [
+              %  ('/n/', 'Bloc-notes')
+              %]
+              %for url, name in links:
+              %  if request.urlparts.path.startswith(url):
                 <li class="active">
-        %    else:
+              %  else:
                 <li>
-        %    end
-            <a href="{{url}}">{{name}}</a></li>
-        %end
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li class="navbar-right"><a href="/logout">Se déconnecter</a></li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div>
-</div>
-% end
-<div class="container">
+              %  end
+                <a href="{{url}}">{{name}}</a></li>
+              %end
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="navbar-right">
+                <a href="/logout">Se déconnecter</a>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    % end
+    <div class="container">
