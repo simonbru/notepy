@@ -86,7 +86,7 @@ if __name__ == '__main__':
         app=app_middleware,
         host=conf.LISTEN_IP,
         port=conf.LISTEN_PORT,
-        debug=True,
-        reloader=True,
-        server='cherrypy'
+        debug=conf.DEVMODE,
+        reloader=conf.DEVMODE,
+        server=conf.WSGI_SERVER,
     )

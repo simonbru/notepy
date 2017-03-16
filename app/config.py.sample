@@ -9,3 +9,4 @@ DEVMODE = False
 
 LISTEN_IP = '::'
 LISTEN_PORT = 8080
+WSGI_SERVER = 'cherrypy'
