@@ -4,4 +4,5 @@ app/notes
 app/config.py
 app/static/todo_edit.js*
 app/static/note_edit.js*
+node_modules
 *.log

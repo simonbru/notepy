@@ -1,9 +1,10 @@
 import re
 
-from bottle import view, request, error, redirect
+from bottle import view, request, redirect
 
-import notes
 import config as conf
+import notes
+
 
 @view('login')
 def login():
@@ -19,14 +20,17 @@ def login():
             redirect('/n/')
     return vars
 
+
 def logout():
     s = request.environ.get('beaker.session')
     s.delete()
     redirect('/login')
 
+
 @view('auth_error')
 def auth_error(err):
     return {}
+
 
 @view('notes')
 def view_notes():
@@ -57,6 +61,7 @@ def todo_edit(note_name):
 def note_post(note_name):
     #import time; time.sleep(5)
     notes.put_content(note_name, request.forms.note_content)
+
 
 def note_get(note_name):
     #import time; time.sleep(5)
