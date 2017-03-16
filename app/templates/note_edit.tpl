@@ -28,11 +28,11 @@
 </div>
 
 % if conf.DEVMODE:
-  <script src="/static/react-with-addons.js"></script>
-  <script src="/static/react-dom.js"></script>
+  <script src="/static/react/react-with-addons.js"></script>
+  <script src="/static/react-dom/react-dom.js"></script>
 % else:
-  <script src="/static/react-with-addons.min.js"></script>
-  <script src="/static/react-dom.min.js"></script>
+  <script src="/static/react/react-with-addons.min.js"></script>
+  <script src="/static/react-dom/react-dom.min.js"></script>
 %end
 
 <script src="/static/note_edit.js"></script>

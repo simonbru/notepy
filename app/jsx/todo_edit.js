@@ -301,7 +301,7 @@ var Icon = ({names, className, ...other}) => {
 //$(document).ready(() => {
 $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
-	.success((data) => {
+	.then((data) => {
 		var todoDiv = document.getElementById("todo_app");
 		var noteText = data.note_content || '';
 		window.todoApp = ReactDOM.render(<TodoApp data={noteText}/>, todoDiv);

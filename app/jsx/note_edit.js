@@ -149,7 +149,7 @@ class NoteContent extends React.Component {
 //$(document).ready(() => {
 $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
-	.success((data) => {
+	.then((data) => {
 		var noteDiv = document.getElementById("note_app");
 		var noteText = data.note_content || '';
 		window.noteApp = ReactDOM.render(<NoteApp textContent={noteText}/>, noteDiv);

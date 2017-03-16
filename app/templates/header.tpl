@@ -44,10 +44,10 @@
     % end
 
     % if conf.DEVMODE:
-      <script src="/static/jquery-2.1.4.js"></script>
+      <script src="/static/jquery/jquery.js"></script>
       <script src="/static/bootstrap/js/bootstrap.js"></script>
     % else:
-      <script src="/static/jquery-2.1.4.min.js"></script>
+      <script src="/static/jquery/jquery.min.js"></script>
       <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     %end
 
