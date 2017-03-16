@@ -9,9 +9,16 @@
 
 <h2>
   {{note_name}}
-  <button class="btn btn-primary pull-right" onclick="todoApp.save()">
-    <span class="glyphicon glyphicon-floppy-disk"></span> Sauvegarder
-  </button>
+
+  <div class="pull-right">
+    <a href="/t/{{note_name}}" class="btn btn-default">
+      <span class="glyphicon glyphicon-pushpin"></span> Todo mode
+    </a>
+
+    <button class="btn btn-primary" onclick="todoApp.save()">
+      <span class="glyphicon glyphicon-floppy-disk"></span> Sauvegarder
+    </button>
+  </div>
 </h2>
 
 <div id="note_app">
