@@ -1658,6 +1658,10 @@ to-fast-properties@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.2.tgz#f3f5c0c3ba7299a7ef99427e44633257ade43320"
 
+todotxt.js@simonbru/todotxt.js#notepy_raw_extract:
+  version "0.0.2"
+  resolved "https://codeload.github.com/simonbru/todotxt.js/tar.gz/411c377bca1710a90f58db3f3d94d81c527f2db5"
+
 tough-cookie@~2.3.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.2.tgz#f081f76e4c85720e6c37a5faced737150d84072a"
