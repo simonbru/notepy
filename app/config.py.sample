@@ -2,7 +2,11 @@ from pathlib import Path as _Path
 
 _current_dir = _Path(__file__).parent
 
-PASSWORD = 'testtest'
+# Generate a password hash with the following command
+# python -c 'import crypt,getpass; print(crypt.crypt(getpass.getpass()))'
+# Sample password is 'testtest'
+PASSWORD = '$5$ZkGMZ/I/kJSI9VH4$W3l5xa8vdWiYbnRzfhz8m9zRDQHgyFEgyEBb5CBV/t4'
+
 NOTES_DIR = _current_dir / 'notes'
 SESSION_DIR = _current_dir / 'session'
 DEVMODE = False

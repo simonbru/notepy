@@ -1,4 +1,5 @@
 import re
+from crypt import crypt
 
 from bottle import view, request, redirect
 
@@ -11,7 +12,8 @@ def login():
     s = request.environ.get('beaker.session')
     vars = {}
     if request.method == 'POST':
-        if request.forms.password != conf.PASSWORD:
+        challenge_pass = crypt(request.forms.password, salt=conf.PASSWORD)
+        if challenge_pass != conf.PASSWORD:
             print("Auth error")
             vars['error_msg'] = 'Mauvais mot de passe'
             return vars
