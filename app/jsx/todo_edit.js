@@ -31,8 +31,8 @@ class TodoApp extends React.Component {
 				return;
 
 			this.save();
-			var message = 'Il y a des modifications non sauvegardées.';
-			if (typeof event == 'undefined') {
+			const message = 'Il y a des modifications non sauvegardées.';
+			if (typeof event === 'undefined') {
 				event = window.event;
 			}
 			if (event) {
@@ -88,10 +88,10 @@ class TodoApp extends React.Component {
 		let todoItem = this.todoList.findById(itemId);
 		text = text.trim();
 
-		if (text.length == 0) {
+		if (text.length === 0) {
 			this.todoList.remove(itemId);
 			this.save();
-		} else if (todoItem.text != text) {
+		} else if (todoItem.text !== text) {
 			todoItem.text = text;
 			this.save();
 		}
@@ -104,14 +104,14 @@ class TodoApp extends React.Component {
 	}
 
 	newTask() {
-		var task = this.todoList.add("EMPTY");
+		const task = this.todoList.add("EMPTY");
 		task.text = ""; // Hack
 		this.setState({editing: task.id});
 	}
 
 	save = (function() {
 		// Put jqXHR in a closure
-		var jqXHR;
+		let jqXHR;
 		return function() {
 			console.log("save");
 			clearTimeout(this.timeout);
@@ -131,7 +131,7 @@ class TodoApp extends React.Component {
 				console.log("sauvegarde réussie");
 			})
 			.fail((xhr,textStatus,err) => {
-				if (textStatus == "abort") {
+				if (textStatus === "abort") {
 					// It just means another request has replaced us,
 					// so don't do anything
 					return;
@@ -147,19 +147,20 @@ class TodoApp extends React.Component {
 }
 
 
-var SaveStateLabel = ({isSaving, dirty}) => {
+const SaveStateLabel = ({isSaving, dirty}) => {
 	// var classes = React.addons.classSet({
 		// 'label': true,
 		// 'pull-right': true,
 		// 'label-asd': true
 	// });
-	var labelClass = text = "";
+	let labelClass = "";
+	let text = "";
 	if (isSaving) {
-		var labelClass = 'label-warning';
-		var text = "Sauvegarde en cours";
+		labelClass = 'label-warning';
+		text = "Sauvegarde en cours";
 	} else if (dirty) {
-		var labelClass = 'label-danger';
-		var text = "Modifications non enregistrées";
+		labelClass = 'label-danger';
+		text = "Modifications non enregistrées";
 	}
 	return <span className={"label pull-right "+labelClass}>{text}</span>;
 };
@@ -284,7 +285,7 @@ class TodoItem extends React.PureComponent {
 	}
 }
 
-var Icon = ({names, className, ...other}) => {
+const Icon = ({names, className, ...other}) => {
 	let classes = names.trim().split(' ').map((x) => 'glyphicon-' + x);
 	classes.push('glyphicon');
 	if (className) classes.push(className);
@@ -296,8 +297,8 @@ var Icon = ({names, className, ...other}) => {
 $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
 	.then((data) => {
-		var todoDiv = document.getElementById("todo_app");
-		var noteText = data.note_content || '';
+		const todoDiv = document.getElementById("todo_app");
+		const noteText = data.note_content || '';
 		window.todoApp = ReactDOM.render(<TodoApp data={noteText}/>, todoDiv);
 	});
 });

@@ -25,8 +25,8 @@ class NoteApp extends React.PureComponent {
 				return;
 
 			this.save();
-			var message = 'Il y a des modifications non sauvegardées.';
-			if (typeof event == 'undefined') {
+			const message = 'Il y a des modifications non sauvegardées.';
+			if (typeof event === 'undefined') {
 				event = window.event;
 			}
 			if (event) {
@@ -65,7 +65,7 @@ class NoteApp extends React.PureComponent {
 
 	save = (() => {
 		// Put jqXHR in a closure
-		var jqXHR;
+		let jqXHR;
 		return () => {
 			console.log("save");
 			clearTimeout(this.timeout);
@@ -84,7 +84,7 @@ class NoteApp extends React.PureComponent {
 				console.log("sauvegarde réussie");
 			})
 			.fail((xhr,textStatus,err) => {
-				if (textStatus == "abort") {
+				if (textStatus === "abort") {
 					// It just means another request has replaced us,
 					// so don't do anything
 					return;
@@ -100,19 +100,20 @@ class NoteApp extends React.PureComponent {
 }
 
 
-var SaveStateLabel = ({isSaving, dirty}) => {
+const SaveStateLabel = ({isSaving, dirty}) => {
 	// var classes = React.addons.classSet({
 		// 'label': true,
 		// 'pull-right': true,
 		// 'label-asd': true
 	// });
-	var labelClass = text = "";
+	let labelClass = "";
+	let text = "";
 	if (isSaving) {
-		var labelClass = 'label-warning';
-		var text = "Sauvegarde en cours";
+		labelClass = 'label-warning';
+		text = "Sauvegarde en cours";
 	} else if (dirty) {
-		var labelClass = 'label-danger';
-		var text = "Modifications non enregistrées";
+		labelClass = 'label-danger';
+		text = "Modifications non enregistrées";
 	}
 	return <span className={"label pull-right "+labelClass}>{text}</span>;
 };
@@ -142,8 +143,8 @@ class NoteContent extends React.PureComponent {
 $(window).on('load', () => {
 	$.get('/api/notes/'+note_name+'/get')
 	.then((data) => {
-		var noteDiv = document.getElementById("note_app");
-		var noteText = data.note_content || '';
+		const noteDiv = document.getElementById("note_app");
+		const noteText = data.note_content || '';
 		window.noteApp = ReactDOM.render(<NoteApp textContent={noteText}/>, noteDiv);
 	});
 });
