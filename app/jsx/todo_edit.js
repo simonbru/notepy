@@ -1,6 +1,3 @@
-function shallowCompare(nextProps, nextState) {
-	return React.addons.shallowCompare(this, nextProps, nextState);
-}
 
 class TodoApp extends React.Component {
 	// mixins: [React.addons.PureRenderMixin],
@@ -169,7 +166,6 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 
 
 class TodoList extends React.Component {
-	// shouldComponentUpdate = shallowCompare
 
 	render() {
 		let renderItem = (item) => (<TodoItem
@@ -192,9 +188,7 @@ class TodoList extends React.Component {
 }
 
 
-class TodoItem extends React.Component {
-
-	shouldComponentUpdate = shallowCompare
+class TodoItem extends React.PureComponent {
 
 	state = {
 		text: this.props.text

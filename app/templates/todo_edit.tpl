@@ -38,10 +38,10 @@
 </button>
 
 % if conf.DEVMODE:
-  <script src="/static/react/react-with-addons.js"></script>
+  <script src="/static/react/react.js"></script>
   <script src="/static/react-dom/react-dom.js"></script>
 % else:
-  <script src="/static/react/react-with-addons.min.js"></script>
+  <script src="/static/react/react.min.js"></script>
   <script src="/static/react-dom/react-dom.min.js"></script>
 %end
 

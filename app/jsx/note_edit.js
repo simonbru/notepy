@@ -1,11 +1,5 @@
-function shallowCompare(nextProps, nextState) {
-	return React.addons.shallowCompare(this, nextProps, nextState);
-}
 
-
-class NoteApp extends React.Component {
-
-	shouldComponentUpdate = shallowCompare
+class NoteApp extends React.PureComponent {
 
 	state = {
 		isSaving: false,
@@ -124,11 +118,9 @@ var SaveStateLabel = ({isSaving, dirty}) => {
 };
 
 
-class NoteContent extends React.Component {
+class NoteContent extends React.PureComponent {
 
 	static defaultProps = {text: ''}
-
-	shouldComponentUpdate = shallowCompare
 
 	onChange(evt) {this.props.onChange(evt.target.value)}
 
