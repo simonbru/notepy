@@ -68,6 +68,7 @@ app.get('/n')(v.view_notes)
 app.get('/n/<note_name>')(v.note_edit)
 app.get('/t/<note_name>')(v.todo_edit)
 app.post('/api/notes/<note_name>/put')(v.note_post)
+app.route('/api/notes/<note_name>/get', 'HEAD')(v.note_head)
 app.get('/api/notes/<note_name>/get')(v.note_get)
 
 

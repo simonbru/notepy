@@ -1,7 +1,9 @@
 import re
 from crypt import crypt
+from datetime import datetime
+from wsgiref.handlers import format_date_time
 
-from bottle import view, request, redirect
+from bottle import view, request, redirect, response
 
 import config as conf
 import notes
@@ -63,11 +65,32 @@ def todo_edit(note_name):
 
 
 def note_post(note_name):
-    #import time; time.sleep(5)
     notes.put_content(note_name, request.forms.note_content)
+    mtime = notes.get_note(note_name, meta_only=True)['mtime']
+    response.add_header(
+        'Last-Modified',
+        format_date_time(mtime.timestamp())
+    )
 
 
 def note_get(note_name):
-    #import time; time.sleep(5)
     note = notes.get_note(note_name) or {}
-    return {'note_content': note.get('content')}
+    mtime = note.get('mtime') or datetime.now()
+
+    response.add_header(
+        'Last-Modified',
+        format_date_time(mtime.timestamp())
+    )
+    return {
+        'note_content': note.get('content')
+    }
+
+
+def note_head(note_name):
+    note = notes.get_note(note_name, meta_only=True) or {}
+    mtime = note.get('mtime') or datetime.now()
+
+    response.add_header(
+        'Last-Modified',
+        format_date_time(mtime.timestamp())
+    )
