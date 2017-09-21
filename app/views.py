@@ -42,21 +42,23 @@ def view_notes():
 @view('note_edit')
 def note_edit(note_name):
     vars = {'note_name': note_name}
-    vars['note_content'] = notes.get_content(note_name) or ''
+    note = notes.get_note(note_name)
+    vars['note_content'] = note['content'] if note else ''
     return vars
 
 
 @view('todo_edit')
 def todo_edit(note_name):
     vars = {'note_name': note_name}
-    note_content = notes.get_content(note_name) or ''
+    note = notes.get_note(note_name)
     vars['items'] = []
-    for line in note_content.split('\n'):
-        item = {}
-        item['complete'] = line.startswith('x ')
-        # Remove e.g. 'x 2015-02-02 '
-        item['text'] = re.sub(r'^x \d{4}-\d{2}-\d{2} ', '', line)
-        vars['items'].append(item)
+    if note:
+        for line in note['content'].split('\n'):
+            item = {}
+            item['complete'] = line.startswith('x ')
+            # Remove e.g. 'x 2015-02-02 '
+            item['text'] = re.sub(r'^x \d{4}-\d{2}-\d{2} ', '', line)
+            vars['items'].append(item)
     return vars
 
 
@@ -67,4 +69,5 @@ def note_post(note_name):
 
 def note_get(note_name):
     #import time; time.sleep(5)
-    return {'note_content': notes.get_content(note_name)}
+    note = notes.get_note(note_name) or {}
+    return {'note_content': note.get('content')}

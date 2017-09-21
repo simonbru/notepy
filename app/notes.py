@@ -14,12 +14,19 @@ def list():
         }
 
 
-def get_content(name):
+def get_note(name, meta_only=False):
     note_path = notes_dir / (name + '.md')
     if not note_path.is_file():
         return None
-    with note_path.open(encoding='utf8') as f:
-        return f.read()
+    mtime = datetime.fromtimestamp(note_path.stat().st_mtime)
+    note = {
+        'name': name,
+        'mtime': mtime,
+    }
+    if not meta_only:
+        with note_path.open(encoding='utf8') as f:
+            note['content'] = f.read()
+    return note
 
 
 def put_content(name, content):
