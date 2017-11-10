@@ -38,11 +38,11 @@
 </button>
 
 % if conf.DEVMODE:
-  <script src="/static/react/react.js"></script>
-  <script src="/static/react-dom/react-dom.js"></script>
+  <script src="/static/react/react.development.js"></script>
+  <script src="/static/react-dom/react-dom.development.js"></script>
 % else:
-  <script src="/static/react/react.min.js"></script>
-  <script src="/static/react-dom/react-dom.min.js"></script>
+  <script src="/static/react/react.production.min.js"></script>
+  <script src="/static/react-dom/react-dom.production.min.js"></script>
 %end
 
 <script src="/static/todotxt.js"></script>

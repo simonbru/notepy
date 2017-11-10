@@ -258,7 +258,9 @@ class TodoItem extends React.PureComponent {
 				</form>
 			);
 		} else {
-			textContainer = <p className={isCompleted && 'striked'}>{text}</p>;
+			textContainer = <p className={isCompleted ? 'striked' : ''}>
+				{text}
+			</p>;
 		}
 
 		let trashIcon = <Icon
