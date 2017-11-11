@@ -14,7 +14,7 @@ ipdb = "*"
 
 Beaker = "==1.*"
 bottle = "==0.12.*"
-CherryPy = "==8.*"  # Issue with bottle 0.12 and CherryPy >8
+cheroot = "==5.*"
 
 [requires]
 

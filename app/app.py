@@ -2,6 +2,7 @@
 
 from os import path, umask
 
+import bottle
 from bottle import (
     Bottle,
     TEMPLATE_PATH,
@@ -79,6 +80,25 @@ def index():
 def static_route(filepath):
     static_path = path.join(current_dir, 'static/')
     return static_file(filepath, root=static_path)
+
+
+# CherryPy adapter does not work anymore
+class CherootServer(bottle.ServerAdapter):
+    def run(self, handler):
+        from cheroot.wsgi import Server
+        self.options['bind_addr'] = (self.host, self.port)
+        self.options['wsgi_app'] = handler
+
+        server = Server(**self.options)
+
+        try:
+            server.start()
+        finally:
+            server.stop()
+
+
+# Monkey-patch CherryPy server adapter
+bottle.server_names['cherrypy'] = CherootServer
 
 
 if __name__ == '__main__':
