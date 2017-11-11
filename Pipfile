@@ -1,0 +1,21 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+ipdb = "*"
+# ipython = "*"
+
+
+[packages]
+
+Beaker = "==1.*"
+bottle = "==0.12.*"
+CherryPy = "==8.*"  # Issue with bottle 0.12 and CherryPy >8
+
+[requires]
+
+python_version = "3.6"
