@@ -6,7 +6,7 @@ from config import NOTES_DIR
 notes_dir = Path(NOTES_DIR)
 
 
-def list():
+def get_list():
     for note in sorted(notes_dir.glob("*.md")):
         yield {
             'name': "".join(note.name.split('.')[:-1]),

@@ -74,7 +74,7 @@ class NoteApp extends React.PureComponent {
 				jqXHR.abort();
 			}
 			this.setState({isSaving: true});
-			jqXHR = $.post('/api/notes/'+note_name+'/put',
+			jqXHR = $.post(`/api/notes/${note_name}`,
 				$.param({note_content: this.state.textContent}))
 			.done(() => {
 				this.setState({
@@ -141,7 +141,7 @@ class NoteContent extends React.PureComponent {
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	$.get('/api/notes/'+note_name+'/get')
+	$.get(`/api/notes/${note_name}`)
 	.then((data) => {
 		const noteDiv = document.getElementById("note_app");
 		const noteText = data.note_content || '';
