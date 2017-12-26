@@ -1,4 +1,4 @@
-% include header title="Connexion"
+% include("header", title="Connexion")
 
 % if defined('error_msg'):
   <div class="alert alert-danger">{{error_msg}}</div>
@@ -19,4 +19,4 @@
   </button>
 </form>
 
-% include footer
+% include("footer")

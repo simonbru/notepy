@@ -1,5 +1,4 @@
 % include("header", title="Todo")
-% import config as conf
 
 
 <script>
@@ -37,7 +36,7 @@
   <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
 </button>
 
-% if conf.DEVMODE:
+% if debug:
   <script src="/static/react/react.development.js"></script>
   <script src="/static/react-dom/react-dom.development.js"></script>
 % else:

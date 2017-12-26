@@ -1,6 +1,4 @@
 % include("header", title="edit")
-% import config as conf
-
 
 <script>
   % #may be dangerous ?
@@ -34,7 +32,7 @@
   </form>
 </div>
 
-% if conf.DEVMODE:
+% if debug:
   <script src="/static/react/react.development.js"></script>
   <script src="/static/react-dom/react-dom.development.js"></script>
 % else:

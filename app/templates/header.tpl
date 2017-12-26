@@ -1,6 +1,4 @@
-% from bottle import request
-% import config as conf
-% s = request.environ.get('beaker.session')
+% session = request.environ.get('beaker.session')
 
 <!DOCTYPE html>
 <html>
@@ -14,7 +12,7 @@
     <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
 
     <!-- Bootstrap -->
-    % if conf.DEVMODE:
+    % if debug:
       <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     % else:
       <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +41,7 @@
       </style>
     % end
 
-    % if conf.DEVMODE:
+    % if debug:
       <script src="/static/jquery/jquery.js"></script>
       <script src="/static/bootstrap/js/bootstrap.js"></script>
     % else:
@@ -53,7 +51,7 @@
 
   </head>
   <body>
-    % if s['auth'] == True:
+    % if session['auth'] == True:
       <div class="navbar navbar-inverse" role="navigation">
         <div class="container">
           <div class="navbar-header">

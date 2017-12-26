@@ -1,15 +1,28 @@
+import functools
 import re
 from crypt import crypt
 from datetime import datetime
 from wsgiref.handlers import format_date_time
 
-from bottle import view, request, redirect, response
+import bottle
+from bottle import request, redirect, response, SimpleTemplate
 
 import config as conf
 import notes
 
 
-@view('login')
+class TemplateAdapter(SimpleTemplate):
+    """Inject some variables into every template context"""
+    defaults = {
+        'debug': conf.DEVMODE,
+        'request': request,
+    }
+
+
+template_view = functools.partial(bottle.view, template_adapter=TemplateAdapter)
+
+
+@template_view('login')
 def login():
     s = request.environ.get('beaker.session')
     vars = {}
@@ -31,17 +44,24 @@ def logout():
     redirect('/login')
 
 
-@view('auth_error')
+@template_view('auth_error')
 def auth_error(err):
     return {}
 
 
-@view('notes')
+@template_view('notes')
 def view_notes():
-    return {}
+    notelist = list(notes.get_list())
+    for note in notelist:
+        note['pretty_mtime'] = note['mtime'].strftime(
+            '%d.%m.%Y à %H:%M:%S'
+        )
+    return {
+        'notes': notelist
+    }
 
 
-@view('note_edit')
+@template_view('note_edit')
 def note_edit(note_name):
     vars = {'note_name': note_name}
     note = notes.get_note(note_name)
@@ -49,7 +69,7 @@ def note_edit(note_name):
     return vars
 
 
-@view('todo_edit')
+@template_view('todo_edit')
 def todo_edit(note_name):
     vars = {'note_name': note_name}
     note = notes.get_note(note_name)
