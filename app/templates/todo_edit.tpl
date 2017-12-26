@@ -1,10 +1,7 @@
 % include("header", title="Todo")
 
 
-<script>
-  % #may be dangerous ?
-  window.note_name = '{{note_name}}';
-</script>
+<div style="display: none;" class="json-data">{{json_data}}</div>
 
 <h2>
   {{note_name}}

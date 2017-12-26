@@ -121,7 +121,7 @@ class TodoApp extends React.Component {
 			}
 			let textContent = this.todoList.toString();
 			this.setState({isSaving: true});
-			jqXHR = $.post(`/api/notes/${note_name}`,
+			jqXHR = $.post(`/api/notes/${this.props.noteName}`,
 				$.param({note_content: textContent}))
 			.done(() => {
 				this.setState({
@@ -297,10 +297,14 @@ const Icon = ({names, className, ...other}) => {
 
 //$(document).ready(() => {
 $(window).on('load', () => {
-	$.get(`/api/notes/${note_name}`)
+	const initialData = JSON.parse(
+		$('.json-data').text()
+	);
+
+	$.get(`/api/notes/${initialData.noteName}`)
 	.then((data) => {
 		const todoDiv = document.getElementById("todo_app");
 		const noteText = data.note_content || '';
-		window.todoApp = ReactDOM.render(<TodoApp data={noteText}/>, todoDiv);
+		window.todoApp = ReactDOM.render(<TodoApp noteName={initialData.noteName} data={noteText}/>, todoDiv);
 	});
 });

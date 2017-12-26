@@ -5,6 +5,7 @@ from datetime import datetime
 from wsgiref.handlers import format_date_time
 
 import bottle
+import json
 from bottle import request, redirect, response, SimpleTemplate
 
 import config as conf
@@ -63,9 +64,15 @@ def view_notes():
 
 @template_view('note_edit')
 def note_edit(note_name):
-    vars = {'note_name': note_name}
     note = notes.get_note(note_name)
-    vars['note_content'] = note['content'] if note else ''
+    json_data = {
+        'noteName': note_name,
+    }
+    vars = {
+        'note_name': note_name,
+        'note_content': note.get('content') if note else '',
+        'json_data': json.dumps(json_data),
+    }
     return vars
 
 
@@ -81,6 +88,9 @@ def todo_edit(note_name):
             # Remove e.g. 'x 2015-02-02 '
             item['text'] = re.sub(r'^x \d{4}-\d{2}-\d{2} ', '', line)
             vars['items'].append(item)
+    vars['json_data'] = json.dumps({
+        'noteName': note_name,
+    })
     return vars
 
 
