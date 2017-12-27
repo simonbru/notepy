@@ -7,7 +7,8 @@ class TodoApp extends React.Component {
 		isSaving: false,
 		dirty: false,
 		editing: null,
-		todoItems: []
+		todoItems: [],
+		lastVersion: this.props.lastVersion,
 	}
 
 	componentWillMount() {
@@ -109,24 +110,31 @@ class TodoApp extends React.Component {
 		this.setState({editing: task.id});
 	}
 
-	save = (function() {
+	save = (() => {
 		// Put jqXHR in a closure
 		let jqXHR;
-		return function() {
+		const innerSave = (force = false) => {
 			console.log("save");
 			clearTimeout(this.timeout);
 			// Abort previous saving request
 			if(jqXHR) {
 				jqXHR.abort();
 			}
-			let textContent = this.todoList.toString();
 			this.setState({isSaving: true});
-			jqXHR = $.post(`/api/notes/${this.props.noteName}`,
-				$.param({note_content: textContent}))
+
+			const params = {
+				note_content: this.todoList.toString()
+			}
+			if (!force) {
+				params['last_version'] = this.state.lastVersion.toISOString()
+			}
+			jqXHR = $.post(`/api/notes/${this.props.noteName}`, params)
 			.done(() => {
+				const lastVersion = new Date(jqXHR.getResponseHeader("Last-Modified"))
 				this.setState({
 					dirty: false,
-					isSaving: false
+					isSaving: false,
+					lastVersion,
 				});
 				console.log("sauvegarde réussie");
 			})
@@ -136,13 +144,19 @@ class TodoApp extends React.Component {
 					// so don't do anything
 					return;
 				}
-				this.setState({
-					isSaving: false
-				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
-				console.log(xhr.responseText);
+
+				this.setState({ isSaving: false });
+				if (xhr.status === 409) {
+					if (confirm("Conflit détecté. Voulez-vous écraser la version du serveur ?")) {
+						innerSave(true)
+					}
+				} else {
+					alert(`Erreur lors de la sauvergarde: ${err}\n${xhr.responseText}`);
+					console.log(xhr.responseText, xhr);
+				}
 			});
 		};
+		return innerSave
 	})()
 }
 
@@ -302,9 +316,15 @@ $(window).on('load', () => {
 	);
 
 	$.get(`/api/notes/${initialData.noteName}`)
-	.then((data) => {
-		const todoDiv = document.getElementById("todo_app");
+	.then((data, textStatus, jqXHR) => {
+		const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
+		const lastVersion = new Date(lastModifiedHeader)
 		const noteText = data.note_content || '';
-		window.todoApp = ReactDOM.render(<TodoApp noteName={initialData.noteName} data={noteText}/>, todoDiv);
+
+		const todoDiv = document.getElementById("todo_app");
+		window.todoApp = ReactDOM.render(
+			<TodoApp noteName={initialData.noteName} lastVersion={lastVersion} data={noteText}/>,
+			todoDiv
+		);
 	});
 });

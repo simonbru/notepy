@@ -5,7 +5,7 @@ class NoteApp extends React.PureComponent {
 		isSaving: false,
 		dirty: false,
 		textContent: this.props.textContent,
-		lastSaved: Date.now()
+		lastVersion: this.props.lastVersion,
 	}
 
 	componentWillMount() {
@@ -66,7 +66,7 @@ class NoteApp extends React.PureComponent {
 	save = (() => {
 		// Put jqXHR in a closure
 		let jqXHR;
-		return () => {
+		const innerSave = (force = false) => {
 			console.log("save");
 			clearTimeout(this.timeout);
 			// Abort previous saving request
@@ -74,12 +74,17 @@ class NoteApp extends React.PureComponent {
 				jqXHR.abort();
 			}
 			this.setState({isSaving: true});
-			jqXHR = $.post(`/api/notes/${this.props.noteName}`,
-				$.param({note_content: this.state.textContent}))
+			const params = { note_content: this.state.textContent }
+			if (!force) {
+				params['last_version'] = this.state.lastVersion.toISOString()
+			}
+			jqXHR = $.post(`/api/notes/${this.props.noteName}`, params)
 			.done(() => {
+				const lastVersion = new Date(jqXHR.getResponseHeader("Last-Modified"))
 				this.setState({
 					dirty: false,
-					isSaving: false
+					isSaving: false,
+					lastVersion,
 				});
 				console.log("sauvegarde réussie");
 			})
@@ -89,13 +94,19 @@ class NoteApp extends React.PureComponent {
 					// so don't do anything
 					return;
 				}
-				this.setState({
-					isSaving: false
-				});
-				alert("Erreur lors de la sauvergarde: "+err+"\n"+xhr.responseText);
-				console.log(xhr.responseText);
+
+				this.setState({ isSaving: false });
+				if (xhr.status === 409) {
+					if (confirm("Conflit détecté. Voulez-vous écraser la version du serveur ?")) {
+						innerSave(true)
+					}
+				} else {
+					alert(`Erreur lors de la sauvergarde: ${err}\n${xhr.responseText}`);
+					console.log(xhr.responseText, xhr);
+				}
 			});
 		};
+		return innerSave
 	})()
 }
 
@@ -146,9 +157,15 @@ $(window).on('load', () => {
 	);
 
 	$.get(`/api/notes/${initialData.noteName}`)
-	.then((data) => {
-		const noteDiv = document.getElementById("note_app");
+	.then((data, textStatus, jqXHR) => {
+		const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
+		const lastVersion = new Date(lastModifiedHeader)
 		const noteText = data.note_content || '';
-		window.noteApp = ReactDOM.render(<NoteApp noteName={initialData.noteName} textContent={noteText}/>, noteDiv);
+
+		const noteDiv = document.getElementById("note_app");
+		window.noteApp = ReactDOM.render(
+			<NoteApp noteName={initialData.noteName} lastVersion={lastVersion} textContent={noteText}/>,
+			noteDiv
+		);
 	});
 });
