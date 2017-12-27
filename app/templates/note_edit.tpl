@@ -10,7 +10,7 @@
       <span class="glyphicon glyphicon-pushpin"></span> Todo mode
     </a>
 
-    <button class="btn btn-primary" onclick="todoApp.save()">
+    <button class="btn btn-primary" onclick="noteApp.save()">
       <span class="glyphicon glyphicon-floppy-disk"></span> Sauvegarder
     </button>
   </div>
