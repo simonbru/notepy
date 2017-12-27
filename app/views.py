@@ -108,7 +108,7 @@ def note_post(note_name):
         client_mtime = arrow.get(client_mtime_string)
         server_mtime = note['mtime']
         delta = abs(client_mtime - server_mtime).total_seconds()
-        if delta < 1:
+        if delta < 10:
             notes.put_content(note_name, request.forms.note_content)
         else:
             response.status = "409 Conflict"
