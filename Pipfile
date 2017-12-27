@@ -6,15 +6,18 @@ name = "pypi"
 
 
 [dev-packages]
+
 ipdb = "*"
 # ipython = "*"
 
 
 [packages]
 
-Beaker = "==1.*"
+beaker = "==1.*"
 bottle = "==0.12.*"
 cheroot = "==5.*"
+arrow = "==0.12.*"
+
 
 [requires]
 

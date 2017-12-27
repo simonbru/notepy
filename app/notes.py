@@ -1,5 +1,6 @@
-from datetime import datetime
 from pathlib import Path
+
+import arrow
 
 from config import NOTES_DIR
 
@@ -10,7 +11,7 @@ def get_list():
     for note in sorted(notes_dir.glob("*.md")):
         yield {
             'name': "".join(note.name.split('.')[:-1]),
-            'mtime': datetime.fromtimestamp(note.stat().st_mtime)
+            'mtime': arrow.get(note.stat().st_mtime)
         }
 
 
@@ -18,7 +19,7 @@ def get_note(name, meta_only=False):
     note_path = notes_dir / (name + '.md')
     if not note_path.is_file():
         return None
-    mtime = datetime.fromtimestamp(note_path.stat().st_mtime)
+    mtime = arrow.get(note_path.stat().st_mtime)
     note = {
         'name': name,
         'mtime': mtime,

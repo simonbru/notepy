@@ -1,9 +1,9 @@
 import functools
 import re
 from crypt import crypt
-from datetime import datetime
 from wsgiref.handlers import format_date_time
 
+import arrow
 import bottle
 import json
 from bottle import request, redirect, response, SimpleTemplate
@@ -54,7 +54,7 @@ def auth_error(err):
 def view_notes():
     notelist = list(notes.get_list())
     for note in notelist:
-        note['pretty_mtime'] = note['mtime'].strftime(
+        note['pretty_mtime'] = note['mtime'].to('local').strftime(
             '%d.%m.%Y à %H:%M:%S'
         )
     return {
@@ -99,17 +99,17 @@ def note_post(note_name):
     mtime = notes.get_note(note_name, meta_only=True)['mtime']
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp())
+        format_date_time(mtime.timestamp)
     )
 
 
 def note_get(note_name):
     note = notes.get_note(note_name) or {}
-    mtime = note.get('mtime') or datetime.now()
+    mtime = note.get('mtime') or arrow.now()
 
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp())
+        format_date_time(mtime.timestamp)
     )
     return {
         'note_content': note.get('content')
@@ -118,9 +118,9 @@ def note_get(note_name):
 
 def note_head(note_name):
     note = notes.get_note(note_name, meta_only=True) or {}
-    mtime = note.get('mtime') or datetime.now()
+    mtime = note.get('mtime') or arrow.now()
 
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp())
+        format_date_time(mtime.timestamp)
     )
