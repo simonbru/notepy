@@ -95,11 +95,30 @@ def todo_edit(note_name):
 
 
 def note_post(note_name):
-    notes.put_content(note_name, request.forms.note_content)
-    mtime = notes.get_note(note_name, meta_only=True)['mtime']
+    """
+    Overwrite note `note_name` with content from `note_content` param.
+
+    If `last_version` param is present, check that
+    the note to be overwrited is on the same version on the client
+    and the server. `last_version` must be a date in ISO 8601 format.
+    """
+    client_mtime_string = request.forms.get('last_version')
+    note = notes.get_note(note_name, meta_only=True)
+    if client_mtime_string and note:
+        client_mtime = arrow.get(client_mtime_string)
+        server_mtime = note['mtime']
+        delta = abs(client_mtime - server_mtime).total_seconds()
+        if delta < 1:
+            notes.put_content(note_name, request.forms.note_content)
+        else:
+            response.status = "409 Conflict"
+    else:
+        notes.put_content(note_name, request.forms.note_content)
+
+    current_mtime = notes.get_note(note_name, meta_only=True)['mtime']
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp)
+        format_date_time(current_mtime.timestamp)
     )
 
 
