@@ -1,4 +1,4 @@
-% include("header", title="edit")
+% include("header", title=note_name)
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
 

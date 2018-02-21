@@ -8,7 +8,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
     />
-    <title>Notepy - {{title}}</title>
+    <title>{{title}} - Notepy</title>
     <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
 
     <!-- Bootstrap -->
