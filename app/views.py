@@ -130,6 +130,7 @@ def note_get(note_name):
         'Last-Modified',
         format_date_time(mtime.timestamp)
     )
+    response.add_header('Cache-Control', 'no-cache')
     return {
         'note_content': note.get('content')
     }
@@ -143,3 +144,4 @@ def note_head(note_name):
         'Last-Modified',
         format_date_time(mtime.timestamp)
     )
+    response.add_header('Cache-Control', 'no-cache')
