@@ -2,10 +2,9 @@
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
 
-<h2>
-  {{note_name}}
-
-  <div class="pull-right">
+<h2 class="topbar">
+  <span class="title">{{note_name}}</span>
+  <div class="btn-toolbar">
     <a href="/t/{{note_name}}" class="btn btn-default">
       <span class="glyphicon glyphicon-pushpin"></span> Todo mode
     </a>

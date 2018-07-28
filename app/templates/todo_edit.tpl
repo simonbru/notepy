@@ -3,9 +3,9 @@
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
 
-<h2>
-  {{note_name}}
-  <div class="btn-toolbar pull-right">
+<h2 class="topbar">
+  <span class="title">{{note_name}}</span>
+  <div class="btn-toolbar">
     <button class="btn btn-primary" onclick="todoApp.newTask()">
       <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
     </button>

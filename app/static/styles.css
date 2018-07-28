@@ -6,6 +6,16 @@ body > div.container {
     margin-bottom: 80px;
 }
 
+.topbar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.topbar .title {
+    flex-grow: 1;
+    margin-right: 3px;
+}
+
 /* note_edit */
 
 #note_edit_form > #note_content {
