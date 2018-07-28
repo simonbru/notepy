@@ -23,7 +23,9 @@
       % icon = 'check' if item['complete'] else 'unchecked'
       % p_class = item['complete'] and 'striked'
       <li class="list-group-item todo-item">
-        <span class="glyphicon-{{icon}} glyphicon item-checkbox">
+        <span class="drag-handle">
+          <img src="/static/drag-icon.svg" alt="drag"/>
+        </span><span class="glyphicon-{{icon}} glyphicon item-checkbox">
         </span><p class="{{p_class}}">{{item['text']}}</p>
       </li>
     % end

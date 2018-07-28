@@ -204,7 +204,7 @@ class TodoList extends React.Component {
 	componentDidMount() {
 		this.sortable = new Sortable(this.sortableElem, {
 			draggable: ".todo-item",
-			handle: ".todo-item",
+			handle: ".drag-handle",
 			sort: true,
 			onUpdate: this.onSortableUpdate.bind(this),
 		})
@@ -330,10 +330,16 @@ class TodoItem extends React.PureComponent {
 				ref="container"
 				>
 
+				<span className="drag-handle" onClick={evt => evt.stopPropagation()}>
+					<img src="/static/drag-icon.svg" alt="drag"/>
+				</span>
+
 				<Icon
 					names={icon}
 					className="item-checkbox"
-					onClick={::this.handleComplete}/>
+					onClick={::this.handleComplete}
+				
+				/>
 				{isEditing ? null : trashIcon}
 				{textContainer}
 			</li>

@@ -27,8 +27,23 @@ body > div.container {
     /* Cancel padding of list-group-item in order to make the whole area
        around the checkbox clickable (and not only the checkbox itself) */
     cursor: pointer;
-    padding: 14px 15px;
-    margin: -11px 0px -11px -15px;
+    padding: 14px 15px 14px 7px;
+    margin: -11px 0px -11px -9px;
+}
+
+#todo_app .drag-handle {
+    /* Same idea as for item-checkbox */
+    cursor: move;
+    height: 20px;
+    margin: -11px 8px -10px -15px;
+    padding: 12px 3px 30px 7px;
+    display: inline-block;
+}
+
+#todo_app .drag-handle img {
+    height: 20px;
+    width: 20px;
+    opacity: 0.6;
 }
 
 #todo_app .list-group-item .item-trash {
@@ -39,9 +54,10 @@ body > div.container {
 }
 
 @media (min-width: 720px) {
-    /* Hide trash by default on desktops */
-    #todo_app .list-group-item:not(:hover) .item-trash {
-        display: none;
+    /* Hide some icons by default on desktops */
+    #todo_app .list-group-item:not(:hover) .item-trash,
+    #todo_app .list-group-item:not(:hover) .drag-handle {
+        visibility: hidden;
     }
 }
 
@@ -67,5 +83,5 @@ body > div.container {
 #todo_app .todo-item input {
     padding: 0px;
     /*width: 100%;*/
-    width: calc(100% - 30px);
+    width: calc(100% - 50px);
 }
