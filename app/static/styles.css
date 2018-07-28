@@ -45,6 +45,10 @@ body > div.container {
     }
 }
 
+#todo_app .todo-item.sortable-ghost {
+    background-color: #DDD;
+}
+
 #todo_app .todo-item p {
     display: inline-block;
     margin: 0px;

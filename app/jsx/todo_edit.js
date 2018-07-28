@@ -1,4 +1,12 @@
 
+function arrayMoveItem(array, fromIndex, toIndex) {
+	const dest = array.slice()
+	const objectToMove = dest.splice(fromIndex, 1)[0]
+	dest.splice(toIndex, 0, objectToMove)
+	return dest
+}
+
+
 class TodoApp extends React.Component {
 	// mixins: [React.addons.PureRenderMixin],
 	// Not pure because we keep the same todoItems list when we add/remove items
@@ -54,6 +62,7 @@ class TodoApp extends React.Component {
 			<TodoList
 				items={this.state.todoItems}
 				editing={this.state.editing}
+				onItemMove={::this.onItemMove}
 				onItemComplete={::this.onItemComplete}
 				onItemTextChange={::this.onItemTextChange}
 				onItemEdit={::this.onItemEdit}
@@ -108,6 +117,16 @@ class TodoApp extends React.Component {
 		const task = this.todoList.add("EMPTY");
 		task.text = ""; // Hack
 		this.setState({editing: task.id});
+	}
+
+	onItemMove(fromIndex, toIndex) {
+		const todoItems = arrayMoveItem(
+			this.state.todoItems, fromIndex, toIndex
+		)
+		this.todoList.items = todoItems
+		this.todoList.reindex()
+		this.setState({ todoItems })
+		this.deferSave()
 	}
 
 	save = (() => {
@@ -182,6 +201,27 @@ const SaveStateLabel = ({isSaving, dirty}) => {
 
 class TodoList extends React.Component {
 
+	componentDidMount() {
+		this.sortable = new Sortable(this.sortableElem, {
+			draggable: ".todo-item",
+			handle: ".todo-item",
+			sort: true,
+			onUpdate: this.onSortableUpdate.bind(this),
+		})
+	}
+
+	componentWillUnmount() {
+		this.sortable.destroy()
+		this.sortable = null
+	}
+
+	onSortableUpdate(evt) {
+		// Restore DOM order to keep it in sync with React's order
+		$(this.sortableElem).children().get(evt.oldIndex).before(evt.item)
+
+		this.props.onItemMove(evt.oldIndex, evt.newIndex)
+	}
+
 	render() {
 		let renderItem = (item) => (<TodoItem
 			key={item.id}
@@ -189,13 +229,13 @@ class TodoList extends React.Component {
 			text={item.text}
 			isEditing={item.id === this.props.editing}
 			isCompleted={item.isCompleted()}
-			onEdit={::this.props.onItemEdit}
-			onToggleComplete={::this.props.onItemComplete}
-			onTextChange={::this.props.onItemTextChange} />
+			onEdit={this.props.onItemEdit}
+			onToggleComplete={this.props.onItemComplete}
+			onTextChange={this.props.onItemTextChange}/>
 		);
 
 		return (
-			<div className="list-group">
+			<div className="list-group" ref={e => this.sortableElem = e}>
 				{this.props.items.map(renderItem)}
 			</div>
 		);
