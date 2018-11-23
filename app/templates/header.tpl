@@ -41,14 +41,6 @@
       </style>
     % end
 
-    % if debug:
-      <script src="/static/jquery/jquery.js"></script>
-      <script src="/static/bootstrap/js/bootstrap.js"></script>
-    % else:
-      <script src="/static/jquery/jquery.min.js"></script>
-      <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    %end
-
   </head>
   <body>
     % if session['auth'] == True:

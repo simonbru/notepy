@@ -1,3 +1,5 @@
+% from helpers import webpack_scripts
+
 % include("header", title=note_name)
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
@@ -28,14 +30,8 @@
   </form>
 </div>
 
-% if debug:
-  <script src="/static/react/react.development.js"></script>
-  <script src="/static/react-dom/react-dom.development.js"></script>
-% else:
-  <script src="/static/react/react.production.min.js"></script>
-  <script src="/static/react-dom/react-dom.production.min.js"></script>
-%end
-
-<script src="/static/note_edit.js"></script>
+% for script in webpack_scripts('note_edit'):
+  <script src="{{script}}"></script>
+% end
 
 % include("footer")

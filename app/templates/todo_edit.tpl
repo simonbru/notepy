@@ -1,3 +1,5 @@
+% from helpers import webpack_scripts
+
 % include("header", title=note_name)
 
 
@@ -37,17 +39,9 @@
   <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
 </button>
 
-% if debug:
-  <script src="/static/react/react.development.js"></script>
-  <script src="/static/react-dom/react-dom.development.js"></script>
-  <script src="/static/sortablejs/Sortable.js"></script>
-% else:
-  <script src="/static/react/react.production.min.js"></script>
-  <script src="/static/react-dom/react-dom.production.min.js"></script>
-  <script src="/static/sortablejs/Sortable.min.js"></script>
-%end
+% for script in webpack_scripts('todo_edit'):
+  <script src="{{script}}"></script>
+% end
 
-<script src="/static/todotxt.js"></script>
-<script src="/static/todo_edit.js"></script>
 
 % include("footer")

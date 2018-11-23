@@ -2,7 +2,6 @@ __pycache__
 app/session
 app/notes
 app/config.py
-app/static/todo_edit.js*
-app/static/note_edit.js*
+app/static/dist
 node_modules
 *.log
