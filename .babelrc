@@ -1,8 +1,18 @@
 {
-    "presets": ["react", "env"],
+    "presets": [
+        "@babel/preset-react",
+        [
+            "@babel/preset-env",
+            {
+                "useBuiltIns": "usage",
+                "targets": "last 2 version"
+            }
+        ]
+    ],
     "plugins": [
-        "transform-object-rest-spread",
-        "transform-class-properties",
-        "transform-function-bind",
+        "@babel/plugin-transform-strict-mode",
+        "@babel/proposal-object-rest-spread",
+        "@babel/proposal-class-properties",
+        "@babel/proposal-function-bind"
     ]
 }
