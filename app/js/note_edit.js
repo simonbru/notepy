@@ -2,6 +2,8 @@ import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import { SaveStateLabel } from './lib/components'
+
 
 class NoteApp extends React.PureComponent {
 
@@ -113,25 +115,6 @@ class NoteApp extends React.PureComponent {
 		return innerSave
 	})()
 }
-
-
-const SaveStateLabel = ({isSaving, dirty}) => {
-	// var classes = React.addons.classSet({
-		// 'label': true,
-		// 'pull-right': true,
-		// 'label-asd': true
-	// });
-	let labelClass = "";
-	let text = "";
-	if (isSaving) {
-		labelClass = 'label-warning';
-		text = "Sauvegarde en cours";
-	} else if (dirty) {
-		labelClass = 'label-danger';
-		text = "Modifications non enregistrées";
-	}
-	return <span className={"label pull-right "+labelClass}>{text}</span>;
-};
 
 
 class NoteContent extends React.PureComponent {

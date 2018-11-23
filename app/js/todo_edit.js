@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom'
 import Sortable from 'sortablejs'
 import todotxt from 'todotxt.js'
 
+import { SaveStateLabel } from './lib/components'
+
 
 function arrayMoveItem(array, fromIndex, toIndex) {
 	const dest = array.slice()
@@ -184,25 +186,6 @@ class TodoApp extends React.Component {
 		return innerSave
 	})()
 }
-
-
-const SaveStateLabel = ({isSaving, dirty}) => {
-	// var classes = React.addons.classSet({
-		// 'label': true,
-		// 'pull-right': true,
-		// 'label-asd': true
-	// });
-	let labelClass = "";
-	let text = "";
-	if (isSaving) {
-		labelClass = 'label-warning';
-		text = "Sauvegarde en cours";
-	} else if (dirty) {
-		labelClass = 'label-danger';
-		text = "Modifications non enregistrées";
-	}
-	return <span className={"label pull-right "+labelClass}>{text}</span>;
-};
 
 
 class TodoList extends React.Component {
