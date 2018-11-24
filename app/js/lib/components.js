@@ -1,3 +1,5 @@
+import React from 'react'
+
 export const SaveStateLabel = ({isSaving, dirty}) => {
 	let labelClass = "";
 	let text = "";

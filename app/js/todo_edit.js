@@ -70,10 +70,10 @@ class TodoApp extends React.Component {
 			<TodoList
 				items={this.state.todoItems}
 				editing={this.state.editing}
-				onItemMove={::this.onItemMove}
-				onItemComplete={::this.onItemComplete}
-				onItemTextChange={::this.onItemTextChange}
-				onItemEdit={::this.onItemEdit}
+				onItemMove={this.onItemMove}
+				onItemComplete={this.onItemComplete}
+				onItemTextChange={this.onItemTextChange}
+				onItemEdit={this.onItemEdit}
 			/>
 			<SaveStateLabel
 				isSaving={this.state.isSaving}
@@ -90,7 +90,7 @@ class TodoApp extends React.Component {
 		this.timeout = setTimeout(() => this.save(), 1500);
 	}
 
-	onItemComplete(itemId, isCompleted) {
+	onItemComplete = (itemId, isCompleted) => {
 		let todoItem = this.todoList.findById(itemId);
 		if (isCompleted) {
 			todoItem.complete();
@@ -102,7 +102,7 @@ class TodoApp extends React.Component {
 		this.forceUpdate();
 	}
 
-	onItemTextChange(itemId, text) {
+	onItemTextChange = (itemId, text) => {
 		let todoItem = this.todoList.findById(itemId);
 		text = text.trim();
 
@@ -117,7 +117,7 @@ class TodoApp extends React.Component {
 		this.setState({editing: null})
 	}
 
-	onItemEdit(itemId) {
+	onItemEdit = (itemId) => {
 		this.setState({editing: itemId});
 	}
 
@@ -127,7 +127,7 @@ class TodoApp extends React.Component {
 		this.setState({editing: task.id});
 	}
 
-	onItemMove(fromIndex, toIndex) {
+	onItemMove = (fromIndex, toIndex) => {
 		const todoItems = arrayMoveItem(
 			this.state.todoItems, fromIndex, toIndex
 		)
@@ -195,7 +195,7 @@ class TodoList extends React.Component {
 			draggable: ".todo-item",
 			handle: ".drag-handle",
 			sort: true,
-			onUpdate: this.onSortableUpdate.bind(this),
+			onUpdate: this.onSortableUpdate,
 		})
 	}
 
@@ -204,7 +204,7 @@ class TodoList extends React.Component {
 		this.sortable = null
 	}
 
-	onSortableUpdate(evt) {
+	onSortableUpdate = (evt) => {
 		// Restore DOM order to keep it in sync with React's order
 		$(this.sortableElem).children().get(evt.oldIndex).before(evt.item)
 
@@ -248,38 +248,38 @@ class TodoItem extends React.PureComponent {
 		this.componentDidUpdate();
 	}
 
-	handleComplete(evt) {
+	handleComplete = (evt) => {
 		let {id, isCompleted, onToggleComplete} = this.props;
 		onToggleComplete(id, !isCompleted);
 		evt.preventDefault();
 		evt.stopPropagation(); // do not call handleEdit
 	}
 
-	handleEdit(evt) {
+	handleEdit = (evt) => {
 		console.log('edit');
 		this.props.onEdit(this.props.id);
 		evt.preventDefault();
 	}
 
-	handleDelete(evt) {
+	handleDelete = (evt) => {
 		let {id, onTextChange} = this.props;
-		this::onTextChange(id, '');
+		onTextChange(id, '');
 		evt.preventDefault();
 		evt.stopPropagation(); // do not call handleEdit
 	}
 
-	handleSubmit(evt) {
+	handleSubmit = (evt) => {
 		console.log('trigger: change');
 		// Hack to avoid Firefox getting back into editing when
 		// pressing "Enter".
 		// setTimeout(() => this.setState({isEditing: false}), 0);
 
 		let {id, onTextChange} = this.props;
-		this::onTextChange(id, this.state.text);
+		onTextChange(id, this.state.text);
 		evt.preventDefault();
 	}
 
-	handleChange(evt) {
+	handleChange = (evt) => {
 		this.setState({text: evt.target.value});
 	}
 
@@ -291,12 +291,12 @@ class TodoItem extends React.PureComponent {
 		let textContainer;
 		if (isEditing) {
 			textContainer = (
-				<form onSubmit={::this.handleSubmit}>
+				<form onSubmit={this.handleSubmit}>
 					<input
-						onBlur={::this.handleSubmit}
+						onBlur={this.handleSubmit}
 						ref="input"
 						value={this.state.text}
-						onChange={::this.handleChange}
+						onChange={this.handleChange}
 						/>
 				</form>
 			);
@@ -309,13 +309,13 @@ class TodoItem extends React.PureComponent {
 		let trashIcon = <Icon
 			names="trash"
 			className="item-trash pull-right text-danger"
-			onClick={::this.handleDelete}
+			onClick={this.handleDelete}
 			/>;
 
 		return (
 			<li
 				className="list-group-item todo-item"
-				onClick={::this.handleEdit}
+				onClick={this.handleEdit}
 				ref="container"
 				>
 
@@ -326,7 +326,7 @@ class TodoItem extends React.PureComponent {
 				<Icon
 					names={icon}
 					className="item-checkbox"
-					onClick={::this.handleComplete}
+					onClick={this.handleComplete}
 				
 				/>
 				{isEditing ? null : trashIcon}

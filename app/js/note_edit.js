@@ -52,13 +52,13 @@ class NoteApp extends React.PureComponent {
 			<br/>
 			<NoteContent
 				text={this.state.textContent}
-				onChange={::this.onTextChange}
+				onChange={this.onTextChange}
 			/>
 		</form>
 		);
 	}
 
-	onTextChange(text) {
+	onTextChange = (text) => {
 		this.setState({
 			textContent: text,
 			dirty: true
@@ -121,14 +121,14 @@ class NoteContent extends React.PureComponent {
 
 	static defaultProps = {text: ''}
 
-	onChange(evt) {this.props.onChange(evt.target.value)}
+	onChange = (evt) => { this.props.onChange(evt.target.value) }
 
 	render() {
 		let nbLines = this.props.text.split('\n').length + 1;
 		return <textarea
 			className="form-control"
 			id="note_content"
-			onChange={::this.onChange}
+			onChange={this.onChange}
 			value={this.props.text}
 			rows={nbLines}
 			ref="noteContent"

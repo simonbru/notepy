@@ -12,7 +12,6 @@
     "plugins": [
         "@babel/plugin-transform-strict-mode",
         "@babel/proposal-object-rest-spread",
-        "@babel/proposal-class-properties",
-        "@babel/proposal-function-bind"
+        "@babel/proposal-class-properties"
     ]
 }
