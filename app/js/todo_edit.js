@@ -16,7 +16,6 @@ function arrayMoveItem(array, fromIndex, toIndex) {
 
 
 class TodoApp extends React.Component {
-  // mixins: [React.addons.PureRenderMixin],
   // Not pure because we keep the same todoItems list when we add/remove items
 
   state = {
@@ -27,11 +26,14 @@ class TodoApp extends React.Component {
     lastVersion: this.props.lastVersion,
   }
 
-  componentWillMount() {
+  constructor(props) {
+    super(props)
     window.gtodoList = this.todoList = new todotxt.TodoList()
     this.todoList.parse(this.props.data)
-    this.setState({todoItems: this.todoList.items})
+    this.state.todoItems = this.todoList.items
+  }
 
+  componentDidMount() {
     $(window).bind('keydown', (event) => {
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {

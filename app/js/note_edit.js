@@ -14,7 +14,7 @@ class NoteApp extends React.PureComponent {
     lastVersion: this.props.lastVersion,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     $(window).bind('keydown', (event) => {
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {
