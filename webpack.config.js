@@ -1,6 +1,7 @@
 const path = require('path');
 
 const ManifestPlugin = require('webpack-manifest-plugin');
+const StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -27,6 +28,10 @@ module.exports = {
   },
   plugins: [
     new ManifestPlugin(),
+    new StatsPlugin('stats.json', {
+      all: false,
+      entrypoints: true,
+    })
   ],
   devtool: 'source-map',
 };
