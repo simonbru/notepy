@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "build": "rm app/static/dist -rf && webpack --mode=production",
+    "build:dev": "rm app/static/dist -rf && webpack --mode=development",
     "clean": "rm app/static/dist -rf",
+    "lint": "eslint app/js",
     "watch": "webpack --watch --mode=development",
     "start": "cd app; ./app.py"
   },
@@ -19,8 +21,11 @@
     "@babel/plugin-transform-strict-mode": "^7.0.0",
     "@babel/preset-env": "^7.1.6",
     "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "core-js": "^2.5.7",
+    "eslint": "^5.9.0",
+    "eslint-plugin-react": "^7.11.1",
     "webpack": "^4.26.0",
     "webpack-cli": "^3.1.2",
     "webpack-manifest-plugin": "^2.0.4"
