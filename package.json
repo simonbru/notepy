@@ -33,8 +33,8 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "jquery": "^3.1.1",
-    "react": "^16.1.0",
-    "react-dom": "^16.1.0",
+    "preact": "^8.3.1",
+    "preact-compat": "^3.18.4",
     "sortablejs": "^1.7.0",
     "todotxt.js": "simonbru/todotxt.js#notepy_raw_extract"
   }

@@ -3,6 +3,12 @@ const path = require('path');
 const ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
+  resolve: {
+    alias: {
+      'react': 'preact-compat',
+      'react-dom': 'preact-compat',
+    }
+  },
   entry: {
     note_edit: './app/js/note_edit.js',
     todo_edit: './app/js/todo_edit.js',

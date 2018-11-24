@@ -1,3 +1,6 @@
+import 'preact/debug'
+import 'preact/devtools'
+
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
