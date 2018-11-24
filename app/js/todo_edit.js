@@ -201,6 +201,8 @@ class TodoList extends React.Component {
     this.sortable = null
   }
 
+  setSortableRef = (elem) => { this.sortableElem = elem }
+
   onSortableUpdate = (evt) => {
     // Restore DOM order to keep it in sync with React's order
     $(this.sortableElem).children().get(evt.oldIndex).before(evt.item)
@@ -221,7 +223,7 @@ class TodoList extends React.Component {
     )
 
     return (
-      <div className="list-group" ref={e => this.sortableElem = e}>
+      <div className="list-group" ref={this.setSortableRef}>
         {this.props.items.map(renderItem)}
       </div>
     )
@@ -237,13 +239,15 @@ class TodoItem extends React.PureComponent {
 
   componentDidUpdate() {
     if (this.props.isEditing) {
-      $(this.refs.input).focus()
+      $(this.inputElem).focus()
     }
   }
 
   componentDidMount() {
     this.componentDidUpdate()
   }
+
+  setInputRef = (elem) => { this.inputElem = elem }
 
   handleComplete = (evt) => {
     let {id, isCompleted, onToggleComplete} = this.props
@@ -289,7 +293,7 @@ class TodoItem extends React.PureComponent {
         <form onSubmit={this.handleSubmit}>
           <input
             onBlur={this.handleSubmit}
-            ref="input"
+            ref={this.setInputRef}
             value={this.state.text}
             onChange={this.handleChange}
           />
@@ -311,7 +315,6 @@ class TodoItem extends React.PureComponent {
       <li
         className="list-group-item todo-item"
         onClick={this.handleEdit}
-        ref="container"
       >
 
         <span className="drag-handle" onClick={evt => evt.stopPropagation()}>

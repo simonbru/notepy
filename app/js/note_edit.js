@@ -129,7 +129,6 @@ class NoteContent extends React.PureComponent {
       onChange={this.onChange}
       value={this.props.text}
       rows={nbLines}
-      ref="noteContent"
     />
   }
 }
