@@ -1,0 +1,17 @@
+
+body > div.container {
+    padding-left:8px;
+    padding-right:8px;
+
+    margin-bottom: 80px;
+}
+
+.topbar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.topbar .title {
+    flex-grow: 1;
+    margin-right: 3px;
+}

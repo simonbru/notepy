@@ -21,7 +21,7 @@ Start the server with `pipenv run app/app.py`
 
 Run `yarn watch` to compile JS files anytime they change.
 
-Set `DEVMODE = True` in `config.py` for verbose errors, auto-reloading and dev version of JS libraries.
+Set `DEVMODE = True` in `config.py` for verbose errors and auto-reloading.
 
 # Limitations
 * UI only available in French

@@ -1,7 +1,4 @@
-% from helpers import webpack_scripts
-
-% include("header", title=note_name)
-
+% include("header", title=note_name, view_name="todo_edit")
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
 
@@ -39,9 +36,4 @@
   <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
 </button>
 
-% for script in webpack_scripts('todo_edit'):
-  <script src="{{script}}"></script>
-% end
-
-
-% include("footer")
+% include("footer", view_name="todo_edit")

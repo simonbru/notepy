@@ -1,3 +1,4 @@
+% from helpers import webpack_styles
 % session = request.environ.get('beaker.session')
 
 <!DOCTYPE html>
@@ -11,34 +12,8 @@
     <title>{{title}} - Notepy</title>
     <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
 
-    <!-- Bootstrap -->
-    % if debug:
-      <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
-    % else:
-      <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    %end
-
-    <link href="/static/styles.css" rel="stylesheet">
-    % if request.urlparts.path == '/login':
-      <style>
-        body {
-          padding-top: 40px;
-          padding-bottom: 40px;
-          background-color: #eee;
-        }
-        .form-signin {
-          max-width: 330px;
-          padding: 15px;
-          margin: 0 auto;
-          text-align: center;
-        }
-        .form-signin h2 {
-          margin-bottom: 20px;
-        }
-        .form-signin input {
-          margin-bottom: 10px;
-        }
-      </style>
+    % for css_url in webpack_styles(get('view_name', 'common')):
+      <link href="{{css_url}}" rel="stylesheet">
     % end
 
   </head>

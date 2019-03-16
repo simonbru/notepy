@@ -1,3 +1,6 @@
+import './common'
+import '../styles/note_edit.css'
+
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'

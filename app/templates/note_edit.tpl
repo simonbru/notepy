@@ -1,6 +1,4 @@
-% from helpers import webpack_scripts
-
-% include("header", title=note_name)
+% include("header", title=note_name, view_name="note_edit")
 
 <div style="display: none;" class="json-data">{{json_data}}</div>
 
@@ -30,8 +28,4 @@
   </form>
 </div>
 
-% for script in webpack_scripts('note_edit'):
-  <script src="{{script}}"></script>
-% end
-
-% include("footer")
+% include("footer", view_name="note_edit")

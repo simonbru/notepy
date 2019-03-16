@@ -1,3 +1,6 @@
+import './common'
+import '../styles/todo_edit.css'
+
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
