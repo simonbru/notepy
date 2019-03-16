@@ -1,2 +1,1 @@
-import 'bootstrap.css'
-import '../styles/common.css'
+import '../styles/common.scss'

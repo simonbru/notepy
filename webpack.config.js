@@ -14,11 +14,6 @@ module.exports = (env, argv) => {
       note_edit: './app/js/note_edit.js',
       todo_edit: './app/js/todo_edit.js',
     },
-    resolve: {
-      alias: {
-        'bootstrap.css': 'bootstrap/dist/css/bootstrap.css',
-      },
-    },
     module: {
       rules: [
         {
@@ -27,7 +22,7 @@ module.exports = (env, argv) => {
           loader: 'babel-loader',
         },
         {
-          test: /\.css$/,
+          test: /\.(css|scss)$/,
           use: [
             prodMode ? MiniCssExtractPlugin.loader : 'style-loader',
             {
@@ -35,7 +30,16 @@ module.exports = (env, argv) => {
               options: {
                 sourceMap: true,
               }
-            }
+            },
+            {
+              loader: "sass-loader",
+              options: {
+                includePaths: [
+                  path.resolve(__dirname, "node_modules/bootstrap-sass/assets/stylesheets"),
+                ],
+                sourceMap: true,
+              }
+            },
           ],
         },
         {
