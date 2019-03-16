@@ -6,9 +6,11 @@ extends:
 parser: 'babel-eslint'
 parserOptions:
   sourceType: module
+plugins:
+  - 'react-hooks'
 settings:
   react:
-    version: 16.6
+    version: "16.8"
 rules:
   indent:
     - error
@@ -21,3 +23,5 @@ rules:
     - never
   no-console: warn
   react/prop-types: off
+  react-hooks/rules-of-hooks: error
+  react-hooks/exhaustive-deps: warn
