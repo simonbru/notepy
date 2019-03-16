@@ -6,7 +6,7 @@
     "build:dev": "rm app/static/dist -rf && webpack --mode=development",
     "clean": "rm app/static/dist -rf",
     "lint": "eslint app/js",
-    "watch": "webpack --watch --mode=development",
+    "watch": "webpack --watch --mode=development --progress",
     "start": "cd app; ./app.py"
   },
   "repository": {
