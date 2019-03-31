@@ -20,13 +20,10 @@ function arrayMoveItem(array, fromIndex, toIndex) {
 }
 
 
-function TodoApp(props) {
-  // Not pure because we keep the same todoItems list when we add/remove items
-  const { noteName } = props
-
+function useTodoStore({ noteName, initialLastVersion, initialNoteText }) {
   const [todoList,] = useState(() => {
     const list = window.gtodoList = new todotxt.TodoList()
-    list.parse(props.data)
+    list.parse(initialNoteText)
     return list
   })
   const [todoItems, setTodoItems] = useState(todoList.items)
@@ -34,11 +31,12 @@ function TodoApp(props) {
   const [isSaving, setIsSaving] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [lastVersion, setLastVersion] = useState(props.lastVersion)
+  const [lastVersion, setLastVersion] = useState(initialLastVersion)
 
   const deferTimeoutRef = useRef(null)
   const jqXHRRef = useRef(null)
   const [, forceUpdate] = useReducer(x => x + 1, 0)
+
 
   const save = useCallback((force = false) => {
     clearTimeout(deferTimeoutRef.current)
@@ -101,10 +99,6 @@ function TodoApp(props) {
     setEditing(null)
   }
 
-  const onItemEdit = (itemId) => {
-    setEditing(itemId)
-  }
-
   const newTask = useCallback(() => {
     const task = todoList.add("EMPTY")
     task.text = "" // Hack
@@ -133,12 +127,58 @@ function TodoApp(props) {
     forceUpdate()
   }
 
+  return {
+    state: {
+      todoItems,
+      isSaving,
+      dirty,
+      editing,
+    },
+    actions: {
+      save,
+      setEditing,
+      newTask,
+      onItemTextChange,
+      onItemMove,
+      onItemComplete,
+    }
+  }
+}
+
+
+function TodoApp(props) {
+  // Not pure because we keep the same todoItems list when we add/remove items
+  const { noteName } = props
+
+  const todoStore = useTodoStore({
+    noteName,
+    initialLastVersion: props.lastVersion,
+    initialNoteText: props.data
+  })
+  const {
+    state: {
+      todoItems,
+      isSaving,
+      dirty,
+      editing,
+    },
+    actions: {
+      save,
+      setEditing,
+      newTask,
+      onItemTextChange,
+      onItemMove,
+      onItemComplete,
+    }
+  } = todoStore
+
   const { appHandleCallback } = props
   useEffect(() => {
     appHandleCallback({ newTask, save })
   }, [appHandleCallback, newTask, save])
 
   useEffect(() => {
+    console.log("Setup shortcutsHandler")
     const shortcutsHandler = (event) => {
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {
@@ -191,7 +231,7 @@ function TodoApp(props) {
         onItemMove={onItemMove}
         onItemComplete={onItemComplete}
         onItemTextChange={onItemTextChange}
-        onItemEdit={onItemEdit}
+        onItemEdit={setEditing}
       />
       <SaveStateLabel
         isSaving={isSaving}
@@ -280,11 +320,12 @@ function TodoItem(props) {
     evt.stopPropagation() // do not call handleEdit
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (evt) => {
     // Hack to avoid Firefox getting back into editing when
     // pressing "Enter".
     // setTimeout(() => this.setState({isEditing: false}), 0)
 
+    evt.preventDefault()
     props.onTextChange(id, localText)
   }
 
