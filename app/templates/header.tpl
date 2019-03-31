@@ -15,6 +15,7 @@
     % for css_url in webpack_styles(get('view_name', 'common')):
       <link href="{{css_url}}" rel="stylesheet">
     % end
+    <link rel="preload" href="/api/notes/{{title}}" as="fetch" crossorigin="anonymous">
 
   </head>
   <body>

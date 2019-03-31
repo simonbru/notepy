@@ -1,5 +1,6 @@
 % include("header", title=note_name, view_name="todo_edit")
 
+
 <div style="display: none;" class="json-data">{{json_data}}</div>
 
 <h2 class="topbar">

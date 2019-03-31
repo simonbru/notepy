@@ -1,6 +1,8 @@
 import './common'
 import '../styles/todo_edit.css'
 
+import 'core-js/es6/promise'
+import 'whatwg-fetch'
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -353,10 +355,55 @@ $(window).on('load', () => {
     $('.json-data').text()
   )
 
-  $.get(`/api/notes/${initialData.noteName}`)
+  // $.ajax(`/api/notes/${initialData.noteName}`, {
+  //   method: 'GET',
+  //   xhr: function() {
+  //     // Get new xhr object using default factory
+  //     var xhr = $.ajaxSettings.xhr();
+  //     // Copy the browser's native setRequestHeader method
+  //     var setRequestHeader = xhr.setRequestHeader;
+  //     // Replace with a wrapper
+  //     xhr.setRequestHeader = function(name, value) {
+  //         // Ignore the X-Requested-With header
+  //         if (name == 'X-Requested-With') return;
+  //         // Otherwise call the native setRequestHeader method
+  //         // Note: setRequestHeader requires its 'this' to be the xhr object,
+  //         // which is what 'this' is here when executed.
+  //         setRequestHeader.call(this, name, value);
+  //     }
+  //     xhr.withCredentials = true
+  //     return xhr
+  //     // pass it on to jQuery
+  //   },
+  //   xhrFields: {
+  //     withCredentials: true,
+  //   }
+  //   // beforeSend: (jqXHR, settings) => {
+  //   //   // jqXHR.setRequestHeader('X-Requested-With', null)
+  //   //   // delete settings.headers["X-Requested-With"]
+  //   //   return true
+  //   // },
+  // })
+    // .then((data, textStatus, jqXHR) => {
+    //   const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
+    //   const lastVersion = new Date(lastModifiedHeader)
+    //   const noteText = data.note_content || ''
+
+    //   const todoDiv = document.getElementById("todo_app")
+    //   window.todoApp = ReactDOM.render(
+    //     <TodoApp noteName={initialData.noteName} lastVersion={lastVersion} data={noteText}/>,
+    //     todoDiv
+    //   )
+    // })
+
+
+
+  fetch(`/api/notes/${initialData.noteName}`)
+    .then(r => r.json())
     .then((data, textStatus, jqXHR) => {
-      const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
-      const lastVersion = new Date(lastModifiedHeader)
+      // const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
+      // const lastVersion = new Date(lastModifiedHeader)
+      const lastVersion = new Date()
       const noteText = data.note_content || ''
 
       const todoDiv = document.getElementById("todo_app")

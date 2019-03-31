@@ -43,6 +43,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "sortablejs": "^1.8.0",
-    "todotxt.js": "simonbru/todotxt.js#notepy_raw_extract"
+    "todotxt.js": "simonbru/todotxt.js#notepy_raw_extract",
+    "whatwg-fetch": "^3.0.0"
   }
 }
