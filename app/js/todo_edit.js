@@ -20,162 +20,158 @@ function arrayMoveItem(array, fromIndex, toIndex) {
 }
 
 
-function useTodoStore({ noteName, initialLastVersion, initialNoteText }) {
-  const [todoList,] = useState(() => {
-    const list = window.gtodoList = new todotxt.TodoList()
-    list.parse(initialNoteText)
-    return list
-  })
-  const [todoItems, setTodoItems] = useState(todoList.items)
+class TodoStore extends React.Component {
 
-  const [isSaving, setIsSaving] = useState(false)
-  const [dirty, setDirty] = useState(false)
-  const [editing, setEditing] = useState(null)
-  const [lastVersion, setLastVersion] = useState(initialLastVersion)
-
-  const deferTimeoutRef = useRef(null)
-  const jqXHRRef = useRef(null)
-  const [, forceUpdate] = useReducer(x => x + 1, 0)
-
-
-  const save = useCallback((force = false) => {
-    clearTimeout(deferTimeoutRef.current)
-    // Abort previous saving request
-    if(jqXHRRef.current) {
-      jqXHRRef.current.abort()
-    }
-    setIsSaving(true)
-
-    const params = {
-      note_content: todoList.toString()
-    }
-    if (!force) {
-      params['last_version'] = lastVersion.toISOString()
-    }
-    jqXHRRef.current = $.post(`/api/notes/${noteName}`, params)
-      .done((data, textStatus, jqXHR) => {
-        setLastVersion(new Date(jqXHR.getResponseHeader("Last-Modified")))
-        setDirty(false)
-        setIsSaving(false)
-      })
-      .fail((xhr, textStatus, err) => {
-        if (textStatus === "abort") {
-          // It just means another request has replaced this one,
-          // so don't do anything
-          return
-        }
-
-        setIsSaving(false)
-        if (xhr.status === 409) {
-          if (confirm("Conflit détecté. Voulez-vous écraser la version du serveur ?")) {
-            save(true)
-          }
-        } else {
-          alert(`Erreur lors de la sauvergarde: ${err}\n${xhr.responseText}`)
-          /* eslint-disable-next-line no-console */
-          console.error(xhr.responseText, xhr)
-        }
-      })
-  }, [lastVersion, todoList, noteName, save])
-
-  const deferSave = useCallback(() => {
-    setDirty(true)
-    if (deferTimeoutRef.current) clearTimeout(deferTimeoutRef.current)
-    deferTimeoutRef.current = setTimeout(() => save(), 1500)
-  }, [setDirty, save])
-
-  const onItemTextChange = (itemId, text) => {
-    let todoItem = todoList.findById(itemId)
-    text = text.trim()
-
-    if (text.length === 0) {
-      todoList.remove(itemId)
-      save()
-    } else if (todoItem.text !== text) {
-      todoItem.text = text
-      save()
-    }
-    // TODO: forceUpdate ?
-    setEditing(null)
+  state = {
+    isSaving: false,
+    dirty: false,
+    editing: null,
+    todoItems: [],
+    lastVersion: this.props.lastVersion,
   }
 
-  const newTask = useCallback(() => {
-    const task = todoList.add("EMPTY")
-    task.text = "" // Hack
-    setEditing(task.id)
-  }, [todoList])
+  constructor(props) {
+    super(props)
+    this.todoList = new todotxt.TodoList()
+    this.todoList.parse(this.props.data)
+    this.state.todoItems = this.todoList.items
 
-  const onItemMove = useCallback((fromIndex, toIndex) => {
-    const newTodoItems = arrayMoveItem(
-      todoItems, fromIndex, toIndex
-    )
-    todoList.items = newTodoItems
-    todoList.reindex()
-    setTodoItems(newTodoItems)
-    deferSave()
-  }, [deferSave, todoItems, todoList])
+    this.actions = {
+      deferSave: this.deferSave.bind(this),
+      newTask: this.newTask.bind(this),
+      save: this.save,
+      onItemTextChange: this.onItemTextChange.bind(this),
+      onItemMove: this.onItemMove.bind(this),
+      onItemComplete: this.onItemComplete.bind(this),
+      setEditing: (taskId) => { this.setState({ editing: taskId }) },
+    }
+  }
 
-  const onItemComplete = (itemId, isCompleted) => {
-    const todoItem = todoList.findById(itemId)
+  render() {
+    return <>
+      { this.props.children(this.state, this.actions) }
+    </>
+  }
+
+  deferSave() {
+    this.setState({dirty: true})
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => this.save(), 1500)
+  }
+
+  onItemComplete = (itemId, isCompleted) => {
+    let todoItem = this.todoList.findById(itemId)
     if (isCompleted) {
       todoItem.complete()
     } else {
       todoItem.uncomplete()
     }
-    deferSave()
-    // this.setState({todoItems: this.todoList.items})
-    forceUpdate()
+    this.deferSave()
+    this.forceUpdate()
   }
 
-  return {
-    state: {
-      todoItems,
-      isSaving,
-      dirty,
-      editing,
-    },
-    actions: {
-      save,
-      setEditing,
-      newTask,
-      onItemTextChange,
-      onItemMove,
-      onItemComplete,
+  onItemTextChange = (itemId, text) => {
+    let todoItem = this.todoList.findById(itemId)
+    text = text.trim()
+
+    if (text.length === 0) {
+      this.todoList.remove(itemId)
+      this.save()
+    } else if (todoItem.text !== text) {
+      todoItem.text = text
+      this.save()
     }
+
+    this.setState({editing: null})
   }
+
+  onItemEdit = (itemId) => {
+    this.setState({editing: itemId})
+  }
+
+  newTask() {
+    const task = this.todoList.add("EMPTY")
+    task.text = "" // Hack
+    this.setState({editing: task.id})
+  }
+
+  onItemMove = (fromIndex, toIndex) => {
+    const todoItems = arrayMoveItem(
+      this.state.todoItems, fromIndex, toIndex
+    )
+    this.todoList.items = todoItems
+    this.todoList.reindex()
+    this.setState({ todoItems })
+    this.deferSave()
+  }
+
+  save = (() => {
+    // Put jqXHR in a closure
+    let jqXHR
+    const innerSave = (force = false) => {
+      clearTimeout(this.timeout)
+      // Abort previous saving request
+      if(jqXHR) {
+        jqXHR.abort()
+      }
+      this.setState({isSaving: true})
+
+      const params = {
+        note_content: this.todoList.toString()
+      }
+      if (!force) {
+        params['last_version'] = this.state.lastVersion.toISOString()
+      }
+      jqXHR = $.post(`/api/notes/${this.props.noteName}`, params)
+        .done(() => {
+          const lastVersion = new Date(jqXHR.getResponseHeader("Last-Modified"))
+          this.setState({
+            dirty: false,
+            isSaving: false,
+            lastVersion,
+          })
+        })
+        .fail((xhr,textStatus,err) => {
+          if (textStatus === "abort") {
+            // It just means another request has replaced us,
+            // so don't do anything
+            return
+          }
+
+          this.setState({ isSaving: false })
+          if (xhr.status === 409) {
+            if (confirm("Conflit détecté. Voulez-vous écraser la version du serveur ?")) {
+              innerSave(true)
+            }
+          } else {
+            alert(`Erreur lors de la sauvergarde: ${err}\n${xhr.responseText}`)
+            /* eslint-disable-next-line no-console */
+            console.error(xhr.responseText, xhr)
+          }
+        })
+    }
+    return innerSave
+  })()
 }
 
 
-function TodoApp(props) {
+function TodoApp({ todoState, todoActions }) {
   // Not pure because we keep the same todoItems list when we add/remove items
-  const { noteName } = props
 
-  const todoStore = useTodoStore({
-    noteName,
-    initialLastVersion: props.lastVersion,
-    initialNoteText: props.data
-  })
   const {
-    state: {
-      todoItems,
-      isSaving,
-      dirty,
-      editing,
-    },
-    actions: {
-      save,
-      setEditing,
-      newTask,
-      onItemTextChange,
-      onItemMove,
-      onItemComplete,
-    }
-  } = todoStore
+    todoItems,
+    isSaving,
+    dirty,
+    editing,
+  } = todoState
 
-  const { appHandleCallback } = props
-  useEffect(() => {
-    appHandleCallback({ newTask, save })
-  }, [appHandleCallback, newTask, save])
+  const {
+    save,
+    setEditing,
+    onItemTextChange,
+    onItemMove,
+    onItemComplete,
+  } = todoActions
 
   useEffect(() => {
     console.log("Setup shortcutsHandler")
@@ -247,19 +243,13 @@ function TodoList(props) {
 
   const sortableElemRef = useRef(null)
 
-  // Optimization hack to avoid initializing Sortable too often
-  // TODO: cleaner solution
-  const onItemMoveRef = useRef(onItemMove)
-  useEffect(() => {
-    onItemMoveRef.current = onItemMove
-  }, [onItemMove])
-
   useLayoutEffect(() => {
+    console.log("setup onSortableUpdate")
     const onSortableUpdate = (evt) => {
       // Restore DOM order to keep it in sync with React's order
       $(sortableElemRef.current).children().get(evt.oldIndex).before(evt.item)
 
-      onItemMoveRef.current(evt.oldIndex, evt.newIndex)
+      onItemMove(evt.oldIndex, evt.newIndex)
     }
 
     const sortable = new Sortable(sortableElemRef.current, {
@@ -271,7 +261,7 @@ function TodoList(props) {
     return () => {
       sortable.destroy()
     }
-  }, [])
+  }, [onItemMove])
 
   const renderItem = (item) => <TodoItem
     key={item.id}
@@ -390,6 +380,11 @@ $(window).on('load', () => {
     $('.json-data').text()
   )
 
+  function renderTodoApp(state, actions) {
+    window.todoApp = actions
+    return <TodoApp todoState={state} todoActions={actions} />
+  }
+
   $.get(`/api/notes/${initialData.noteName}`)
     .then((data, textStatus, jqXHR) => {
       const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
@@ -398,12 +393,11 @@ $(window).on('load', () => {
 
       const todoDiv = document.getElementById("todo_app")
       ReactDOM.render(
-        <TodoApp
+        <TodoStore
           noteName={initialData.noteName}
           lastVersion={lastVersion}
           data={noteText}
-          appHandleCallback={handle => window.todoApp = handle}
-        />,
+        >{renderTodoApp}</TodoStore>,
         todoDiv
       )
     })
