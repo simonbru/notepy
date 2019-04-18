@@ -5,7 +5,7 @@
 <h2 class="topbar">
   <span class="title">{{note_name}}</span>
   <div class="btn-toolbar">
-    <button class="btn btn-primary" onclick="todoApp.newTask()">
+    <button class="btn btn-primary" onclick="todoApp.newItem()">
       <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
     </button>
     <button class="btn btn-primary" onclick="todoApp.save()">
@@ -32,7 +32,7 @@
   <span class="label label-warning pull-right">Chargement...</span>
 </div>
 
-<button class="btn btn-primary" onclick="todoApp.newTask()">
+<button class="btn btn-primary" onclick="todoApp.newItem()">
   <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
 </button>
 

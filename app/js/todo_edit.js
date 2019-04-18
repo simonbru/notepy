@@ -2,9 +2,7 @@ import './common'
 import '../styles/todo_edit.css'
 
 import $ from 'jquery'
-import React, {
-  useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState
-} from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import Sortable from 'sortablejs'
 import todotxt from 'todotxt.js'
@@ -37,13 +35,15 @@ class TodoStore extends React.Component {
     this.state.todoItems = this.todoList.items
 
     this.actions = {
-      deferSave: this.deferSave.bind(this),
-      newTask: this.newTask.bind(this),
+      deferSave: this.deferSave,
       save: this.save,
-      onItemTextChange: this.onItemTextChange.bind(this),
-      onItemMove: this.onItemMove.bind(this),
-      onItemComplete: this.onItemComplete.bind(this),
-      setEditing: (taskId) => { this.setState({ editing: taskId }) },
+      newItem: this.newItem,
+      completeItem: this.completeItem,
+      editItem: (taskId) => {
+        this.setState({ editing: taskId })
+      },
+      moveItem: this.moveItem,
+      updateItem: this.updateItem,
     }
   }
 
@@ -53,13 +53,7 @@ class TodoStore extends React.Component {
     </>
   }
 
-  deferSave() {
-    this.setState({dirty: true})
-    if (this.timeout) clearTimeout(this.timeout)
-    this.timeout = setTimeout(() => this.save(), 1500)
-  }
-
-  onItemComplete = (itemId, isCompleted) => {
+  completeItem = (itemId, isCompleted) => {
     let todoItem = this.todoList.findById(itemId)
     if (isCompleted) {
       todoItem.complete()
@@ -70,7 +64,7 @@ class TodoStore extends React.Component {
     this.forceUpdate()
   }
 
-  onItemTextChange = (itemId, text) => {
+  updateItem = (itemId, text) => {
     let todoItem = this.todoList.findById(itemId)
     text = text.trim()
 
@@ -85,17 +79,13 @@ class TodoStore extends React.Component {
     this.setState({editing: null})
   }
 
-  onItemEdit = (itemId) => {
-    this.setState({editing: itemId})
-  }
-
-  newTask() {
+  newItem = () => {
     const task = this.todoList.add("EMPTY")
     task.text = "" // Hack
     this.setState({editing: task.id})
   }
 
-  onItemMove = (fromIndex, toIndex) => {
+  moveItem = (fromIndex, toIndex) => {
     const todoItems = arrayMoveItem(
       this.state.todoItems, fromIndex, toIndex
     )
@@ -103,6 +93,12 @@ class TodoStore extends React.Component {
     this.todoList.reindex()
     this.setState({ todoItems })
     this.deferSave()
+  }
+
+  deferSave = () => {
+    this.setState({dirty: true})
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => this.save(), 1500)
   }
 
   save = (() => {
@@ -165,16 +161,9 @@ function TodoApp({ todoState, todoActions }) {
     editing,
   } = todoState
 
-  const {
-    save,
-    setEditing,
-    onItemTextChange,
-    onItemMove,
-    onItemComplete,
-  } = todoActions
+  const { save } = todoActions
 
   useEffect(() => {
-    console.log("Setup shortcutsHandler")
     const shortcutsHandler = (event) => {
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {
@@ -224,10 +213,7 @@ function TodoApp({ todoState, todoActions }) {
       <TodoList
         items={todoItems}
         editing={editing}
-        onItemMove={onItemMove}
-        onItemComplete={onItemComplete}
-        onItemTextChange={onItemTextChange}
-        onItemEdit={setEditing}
+        actions={todoActions}
       />
       <SaveStateLabel
         isSaving={isSaving}
@@ -239,17 +225,17 @@ function TodoApp({ todoState, todoActions }) {
 
 
 function TodoList(props) {
-  const { editing, items, onItemMove } = props
+  const { editing, items, actions } = props
+  const { moveItem } = actions
 
   const sortableElemRef = useRef(null)
 
   useLayoutEffect(() => {
-    console.log("setup onSortableUpdate")
     const onSortableUpdate = (evt) => {
       // Restore DOM order to keep it in sync with React's order
       $(sortableElemRef.current).children().get(evt.oldIndex).before(evt.item)
 
-      onItemMove(evt.oldIndex, evt.newIndex)
+      moveItem(evt.oldIndex, evt.newIndex)
     }
 
     const sortable = new Sortable(sortableElemRef.current, {
@@ -261,7 +247,7 @@ function TodoList(props) {
     return () => {
       sortable.destroy()
     }
-  }, [onItemMove])
+  }, [moveItem])
 
   const renderItem = (item) => <TodoItem
     key={item.id}
@@ -269,9 +255,7 @@ function TodoList(props) {
     text={item.text}
     isEditing={item.id === editing}
     isCompleted={item.isCompleted()}
-    onEdit={props.onItemEdit}
-    onToggleComplete={props.onItemComplete}
-    onTextChange={props.onItemTextChange}
+    actions={actions}
   />
 
   return (
@@ -284,7 +268,7 @@ function TodoList(props) {
 
 
 function TodoItem(props) {
-  const { id, isCompleted, isEditing, text } = props
+  const { id, isCompleted, isEditing, text, actions } = props
 
   const [localText, setLocalText] = useState(text)
   const inputRef = useRef(null)
@@ -296,17 +280,17 @@ function TodoItem(props) {
   }, [isEditing])
 
   const handleComplete = (evt) => {
-    props.onToggleComplete(id, !isCompleted)
+    actions.completeItem(id, !isCompleted)
     evt.preventDefault()
     evt.stopPropagation() // do not call handleEdit
   }
 
   const handleEdit = () => {
-    props.onEdit(id)
+    actions.editItem(id)
   }
 
   const handleDelete = (evt) => {
-    props.onTextChange(id, '')
+    actions.updateItem(id, '')
     evt.stopPropagation() // do not call handleEdit
   }
 
@@ -316,7 +300,7 @@ function TodoItem(props) {
     // setTimeout(() => this.setState({isEditing: false}), 0)
 
     evt.preventDefault()
-    props.onTextChange(id, localText)
+    actions.updateItem(id, localText)
   }
 
   let icon = isCompleted ? 'check' : 'unchecked'
@@ -358,7 +342,6 @@ function TodoItem(props) {
         names={icon}
         className="item-checkbox"
         onClick={handleComplete}
-
       />
       {isEditing ? null : trashIcon}
       {textContainer}
