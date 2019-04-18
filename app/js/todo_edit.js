@@ -2,7 +2,7 @@ import './common'
 import '../styles/todo_edit.css'
 
 import $ from 'jquery'
-import React from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import Sortable from 'sortablejs'
 import todotxt from 'todotxt.js'
@@ -18,8 +18,7 @@ function arrayMoveItem(array, fromIndex, toIndex) {
 }
 
 
-class TodoApp extends React.Component {
-  // Not pure because we keep the same todoItems list when we add/remove items
+class TodoStore extends React.Component {
 
   state = {
     isSaving: false,
@@ -31,69 +30,30 @@ class TodoApp extends React.Component {
 
   constructor(props) {
     super(props)
-    window.gtodoList = this.todoList = new todotxt.TodoList()
+    this.todoList = new todotxt.TodoList()
     this.todoList.parse(this.props.data)
     this.state.todoItems = this.todoList.items
-  }
 
-  componentDidMount() {
-    $(window).bind('keydown', (event) => {
-      if (event.ctrlKey || event.metaKey) {
-        switch (String.fromCharCode(event.which).toLowerCase()) {
-        case 's':
-          event.preventDefault()
-          this.save()
-          break
-        }
-      }
-    })
-
-    $(window).bind('beforeunload', (event) => {
-      if (!this.state.dirty) return
-
-      this.save()
-      const message = 'Il y a des modifications non sauvegardées.'
-      if (typeof event === 'undefined') {
-        event = window.event
-      }
-      if (event) {
-        event.returnValue = message
-      }
-      return message
-    })
+    this.actions = {
+      deferSave: this.deferSave,
+      save: this.save,
+      newItem: this.newItem,
+      completeItem: this.completeItem,
+      editItem: (taskId) => {
+        this.setState({ editing: taskId })
+      },
+      moveItem: this.moveItem,
+      updateItem: this.updateItem,
+    }
   }
 
   render() {
-    return (
-      <div>
-        <SaveStateLabel
-          isSaving={this.state.isSaving}
-          dirty={this.state.dirty}
-        />
-        <br/>
-        <TodoList
-          items={this.state.todoItems}
-          editing={this.state.editing}
-          onItemMove={this.onItemMove}
-          onItemComplete={this.onItemComplete}
-          onItemTextChange={this.onItemTextChange}
-          onItemEdit={this.onItemEdit}
-        />
-        <SaveStateLabel
-          isSaving={this.state.isSaving}
-          dirty={this.state.dirty}
-        />
-      </div>
-    )
+    return <>
+      { this.props.children(this.state, this.actions) }
+    </>
   }
 
-  deferSave() {
-    this.setState({dirty: true})
-    if (this.timeout) clearTimeout(this.timeout)
-    this.timeout = setTimeout(() => this.save(), 1500)
-  }
-
-  onItemComplete = (itemId, isCompleted) => {
+  completeItem = (itemId, isCompleted) => {
     let todoItem = this.todoList.findById(itemId)
     if (isCompleted) {
       todoItem.complete()
@@ -101,11 +61,10 @@ class TodoApp extends React.Component {
       todoItem.uncomplete()
     }
     this.deferSave()
-    // this.setState({todoItems: this.todoList.items})
     this.forceUpdate()
   }
 
-  onItemTextChange = (itemId, text) => {
+  updateItem = (itemId, text) => {
     let todoItem = this.todoList.findById(itemId)
     text = text.trim()
 
@@ -120,17 +79,13 @@ class TodoApp extends React.Component {
     this.setState({editing: null})
   }
 
-  onItemEdit = (itemId) => {
-    this.setState({editing: itemId})
-  }
-
-  newTask() {
+  newItem = () => {
     const task = this.todoList.add("EMPTY")
     task.text = "" // Hack
     this.setState({editing: task.id})
   }
 
-  onItemMove = (fromIndex, toIndex) => {
+  moveItem = (fromIndex, toIndex) => {
     const todoItems = arrayMoveItem(
       this.state.todoItems, fromIndex, toIndex
     )
@@ -138,6 +93,12 @@ class TodoApp extends React.Component {
     this.todoList.reindex()
     this.setState({ todoItems })
     this.deferSave()
+  }
+
+  deferSave = () => {
+    this.setState({dirty: true})
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => this.save(), 1500)
   }
 
   save = (() => {
@@ -190,153 +151,202 @@ class TodoApp extends React.Component {
 }
 
 
-class TodoList extends React.Component {
+function TodoApp({ todoState, todoActions }) {
+  // Not pure because we keep the same todoItems list when we add/remove items
 
-  componentDidMount() {
-    this.sortable = new Sortable(this.sortableElem, {
-      draggable: ".todo-item",
-      handle: ".drag-handle",
-      sort: true,
-      onUpdate: this.onSortableUpdate,
-    })
-  }
+  const {
+    todoItems,
+    isSaving,
+    dirty,
+    editing,
+  } = todoState
 
-  componentWillUnmount() {
-    this.sortable.destroy()
-    this.sortable = null
-  }
+  const { save } = todoActions
 
-  setSortableRef = (elem) => { this.sortableElem = elem }
+  useEffect(() => {
+    const shortcutsHandler = (event) => {
+      if (event.ctrlKey || event.metaKey) {
+        switch (String.fromCharCode(event.which).toLowerCase()) {
+        case 's':
+          event.preventDefault()
+          save()
+          break
+        }
+      }
+    }
 
-  onSortableUpdate = (evt) => {
-    // Restore DOM order to keep it in sync with React's order
-    $(this.sortableElem).children().get(evt.oldIndex).before(evt.item)
+    $(window).bind('keydown', shortcutsHandler)
+    return () => {
+      $(window).unbind('keydown', shortcutsHandler)
+    }
+  }, [save])
 
-    this.props.onItemMove(evt.oldIndex, evt.newIndex)
-  }
+  useEffect(() => {
+    // TODO: avoid triggering effect so often ?
+    if (!dirty) return
 
-  render() {
-    let renderItem = (item) => (<TodoItem
-      key={item.id}
-      id={item.id}
-      text={item.text}
-      isEditing={item.id === this.props.editing}
-      isCompleted={item.isCompleted()}
-      onEdit={this.props.onItemEdit}
-      onToggleComplete={this.props.onItemComplete}
-      onTextChange={this.props.onItemTextChange}/>
-    )
+    const beforeunloadHandler = (event) => {
+      save()
+      const message = 'Il y a des modifications non sauvegardées.'
+      if (typeof event === 'undefined') {
+        event = window.event
+      }
+      if (event) {
+        event.returnValue = message
+      }
+      return message
+    }
 
-    return (
-      <div className="list-group" ref={this.setSortableRef}>
-        {this.props.items.map(renderItem)}
-      </div>
-    )
-  }
+    $(window).bind('beforeunload', beforeunloadHandler)
+    return () => {
+      $(window).unbind('beforeunload', beforeunloadHandler)
+    }
+  }, [dirty, save])
+
+  return (
+    <div>
+      <SaveStateLabel
+        isSaving={isSaving}
+        dirty={dirty}
+      />
+      <br/>
+      <TodoList
+        items={todoItems}
+        editing={editing}
+        actions={todoActions}
+      />
+      <SaveStateLabel
+        isSaving={isSaving}
+        dirty={dirty}
+      />
+    </div>
+  )
 }
 
 
-class TodoItem extends React.PureComponent {
+function TodoList(props) {
+  const { editing, items, actions } = props
+  const { moveItem } = actions
 
-  state = {
-    text: this.props.text
-  }
+  const sortableElemRef = useRef(null)
 
-  componentDidUpdate() {
-    if (this.props.isEditing) {
-      $(this.inputElem).focus()
+  useLayoutEffect(() => {
+    const onSortableUpdate = (evt) => {
+      // Restore DOM order to keep it in sync with React's order
+      $(sortableElemRef.current).children().get(evt.oldIndex).before(evt.item)
+
+      moveItem(evt.oldIndex, evt.newIndex)
     }
-  }
 
-  componentDidMount() {
-    this.componentDidUpdate()
-  }
+    const sortable = new Sortable(sortableElemRef.current, {
+      draggable: ".todo-item",
+      handle: ".drag-handle",
+      sort: true,
+      onUpdate: onSortableUpdate,
+    })
+    return () => {
+      sortable.destroy()
+    }
+  }, [moveItem])
 
-  setInputRef = (elem) => { this.inputElem = elem }
+  const renderItem = (item) => <TodoItem
+    key={item.id}
+    id={item.id}
+    text={item.text}
+    isEditing={item.id === editing}
+    isCompleted={item.isCompleted()}
+    actions={actions}
+  />
 
-  handleComplete = (evt) => {
-    let {id, isCompleted, onToggleComplete} = this.props
-    onToggleComplete(id, !isCompleted)
+  return (
+    <div className="list-group" ref={sortableElemRef}>
+      {items.map(renderItem)}
+    </div>
+  )
+
+}
+
+
+function TodoItem(props) {
+  const { id, isCompleted, isEditing, text, actions } = props
+
+  const [localText, setLocalText] = useState(text)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current.focus()
+    }
+  }, [isEditing])
+
+  const handleComplete = (evt) => {
+    actions.completeItem(id, !isCompleted)
     evt.preventDefault()
     evt.stopPropagation() // do not call handleEdit
   }
 
-  handleEdit = (evt) => {
-    this.props.onEdit(this.props.id)
-    evt.preventDefault()
+  const handleEdit = () => {
+    actions.editItem(id)
   }
 
-  handleDelete = (evt) => {
-    let {id, onTextChange} = this.props
-    onTextChange(id, '')
-    evt.preventDefault()
+  const handleDelete = (evt) => {
+    actions.updateItem(id, '')
     evt.stopPropagation() // do not call handleEdit
   }
 
-  handleSubmit = (evt) => {
+  const handleSubmit = (evt) => {
     // Hack to avoid Firefox getting back into editing when
     // pressing "Enter".
     // setTimeout(() => this.setState({isEditing: false}), 0)
 
-    let {id, onTextChange} = this.props
-    onTextChange(id, this.state.text)
     evt.preventDefault()
+    actions.updateItem(id, localText)
   }
 
-  handleChange = (evt) => {
-    this.setState({text: evt.target.value})
-  }
+  let icon = isCompleted ? 'check' : 'unchecked'
 
-  render() {
-    let {isCompleted, isEditing} = this.props
-    let {text} = this.state
-    let icon = isCompleted ? 'check' : 'unchecked'
-
-    let textContainer
-    if (isEditing) {
-      textContainer = (
-        <form onSubmit={this.handleSubmit}>
-          <input
-            onBlur={this.handleSubmit}
-            ref={this.setInputRef}
-            value={this.state.text}
-            onChange={this.handleChange}
-          />
-        </form>
-      )
-    } else {
-      textContainer = <p className={isCompleted ? 'striked' : ''}>
-        {text}
-      </p>
-    }
-
-    let trashIcon = <Icon
-      names="trash"
-      className="item-trash pull-right text-danger"
-      onClick={this.handleDelete}
-    />
-
-    return (
-      <li
-        className="list-group-item todo-item"
-        onClick={this.handleEdit}
-      >
-
-        <span className="drag-handle" onClick={evt => evt.stopPropagation()}>
-          <img src="/static/drag-icon.svg" alt="drag"/>
-        </span>
-
-        <Icon
-          names={icon}
-          className="item-checkbox"
-          onClick={this.handleComplete}
-        
+  let textContainer
+  if (isEditing) {
+    textContainer = (
+      <form onSubmit={handleSubmit}>
+        <input
+          onBlur={handleSubmit}
+          ref={inputRef}
+          value={localText}
+          onChange={evt => setLocalText(evt.target.value)}
         />
-        {isEditing ? null : trashIcon}
-        {textContainer}
-      </li>
+      </form>
     )
+  } else {
+    textContainer = <p className={isCompleted ? 'striked' : ''}>
+      {localText}
+    </p>
   }
+
+  let trashIcon = <Icon
+    names="trash"
+    className="item-trash pull-right text-danger"
+    onClick={handleDelete}
+  />
+
+  return (
+    <li
+      className="list-group-item todo-item"
+      onClick={handleEdit}
+    >
+      <span className="drag-handle" onClick={evt => evt.stopPropagation()}>
+        <img src="/static/drag-icon.svg" alt="drag"/>
+      </span>
+
+      <Icon
+        names={icon}
+        className="item-checkbox"
+        onClick={handleComplete}
+      />
+      {isEditing ? null : trashIcon}
+      {textContainer}
+    </li>
+  )
 }
 
 const Icon = ({names, className, ...other}) => {
@@ -353,6 +363,11 @@ $(window).on('load', () => {
     $('.json-data').text()
   )
 
+  function renderTodoApp(state, actions) {
+    window.todoApp = actions
+    return <TodoApp todoState={state} todoActions={actions} />
+  }
+
   $.get(`/api/notes/${initialData.noteName}`)
     .then((data, textStatus, jqXHR) => {
       const lastModifiedHeader = jqXHR.getResponseHeader("Last-Modified")
@@ -360,8 +375,12 @@ $(window).on('load', () => {
       const noteText = data.note_content || ''
 
       const todoDiv = document.getElementById("todo_app")
-      window.todoApp = ReactDOM.render(
-        <TodoApp noteName={initialData.noteName} lastVersion={lastVersion} data={noteText}/>,
+      ReactDOM.render(
+        <TodoStore
+          noteName={initialData.noteName}
+          lastVersion={lastVersion}
+          data={noteText}
+        >{renderTodoApp}</TodoStore>,
         todoDiv
       )
     })
