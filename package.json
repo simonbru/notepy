@@ -30,11 +30,10 @@
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.5.1",
     "file-loader": "^3.0.1",
-    "mini-css-extract-plugin": "^0.5.0",
+    "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
     "webpack": "^4.26.0",
     "webpack-cli": "^3.1.2",
     "webpack-manifest-plugin": "^2.0.4"
