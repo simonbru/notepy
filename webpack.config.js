@@ -9,7 +9,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = (env, argv) => {
   const prodMode = argv.mode === 'production';
   // 'chunkhash' does not work with hot reloading for some reason
-  const hashParam = argv.inline ? 'hash' : 'chunkhash';
+  const hashParam = 'chunkhash';
 
   return {
     entry: {
@@ -28,7 +28,12 @@ module.exports = (env, argv) => {
         {
           test: /\.(css|scss)$/,
           use: [
-            prodMode ? MiniCssExtractPlugin.loader : 'style-loader',
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: true,
+              }
+            },
             {
               loader: 'css-loader',
               options: {
@@ -63,7 +68,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'app/static/dist'),
       publicPath: '/static/dist/',
-      filename: `[name].[${hashParam}:4].bundle.js`,
+      filename: `[name].[id].bundle.js`,
     },
     devServer: {
       port: 3080,
@@ -93,7 +98,7 @@ module.exports = (env, argv) => {
         jQuery: "jquery",
       }),
       new MiniCssExtractPlugin({
-        filename: `[name].[${hashParam}:4].bundle.css`,
+        filename: `[name].[id].bundle.css`,
       }),
       new ManifestPlugin(),
     ],
