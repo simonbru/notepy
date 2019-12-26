@@ -132,6 +132,7 @@ class NoteContent extends React.PureComponent {
       onChange={this.onChange}
       value={this.props.text}
       rows={nbLines}
+      spellCheck={false}
     />
   }
 }

@@ -4,4 +4,6 @@
     padding: 3px 3px;
     box-shadow: none;
     transition: none;
+    font-family: monospace;
+    font-size: 0.93em;
 }
