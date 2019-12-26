@@ -1,4 +1,5 @@
 import functools
+import hmac
 import re
 from crypt import crypt
 from wsgiref.handlers import format_date_time
@@ -28,8 +29,9 @@ def login():
     s = request.environ.get('beaker.session')
     vars = {}
     if request.method == 'POST':
-        challenge_pass = crypt(request.forms.password, salt=conf.PASSWORD)
-        if challenge_pass != conf.PASSWORD:
+        challenge_hash = crypt(request.forms.password, salt=conf.PASSWORD)
+        correct_hash = conf.PASSWORD.encode()
+        if not hmac.compare_digest(challenge_hash, correct_hash):
             print("Auth error")
             vars['error_msg'] = 'Mauvais mot de passe'
             return vars
