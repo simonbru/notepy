@@ -30,7 +30,7 @@ def login():
     vars = {}
     if request.method == 'POST':
         challenge_hash = crypt(request.forms.password, salt=conf.PASSWORD)
-        correct_hash = conf.PASSWORD.encode()
+        correct_hash = conf.PASSWORD
         if not hmac.compare_digest(challenge_hash, correct_hash):
             print("Auth error")
             vars['error_msg'] = 'Mauvais mot de passe'
