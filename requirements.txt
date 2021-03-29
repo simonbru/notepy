@@ -1,6 +1,7 @@
-beaker==1.9.0 --hash=sha256:317d0f9a3618364a4ce447d227b698bd7cdcad57301326ce8013d200abd695bf
-cheroot==5.11.0 --hash=sha256:6d1f18739e545281e961220c2def5a2a5a4cf2ee5a35b173f5513d16666a5159  --hash=sha256:499a0ad01c120f0b83c66ec788ef41a1f564ff405c1d510c3415e71645eca2e1
-arrow==0.12.0 --hash=sha256:a15ecfddf334316e3ac8695e48c15d1be0d6038603b33043930dcf0e675c86ee
-python-dateutil==2.6.1 --hash=sha256:95511bae634d69bc7329ba55e646499a842bc4ec342ad54a8cdb65645a0aad3c  --hash=sha256:891c38b2a02f5bb1be3e4793866c8df49c7d19baabf9c1bad62547e0b4866aca
-bottle==0.12.13 --hash=sha256:39b751aee0b167be8dffb63ca81b735bbf1dd0905b3bc42761efedee8f123355
-six==1.11.0 --hash=sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb  --hash=sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9
+-i https://pypi.python.org/simple/
+arrow==0.12.1
+beaker==1.11.0
+bottle==0.12.18
+cheroot==5.11.0
+python-dateutil==2.8.1
+six==1.15.0
