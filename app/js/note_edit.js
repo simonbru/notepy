@@ -18,7 +18,7 @@ class NoteApp extends React.PureComponent {
   }
 
   componentDidMount() {
-    $(window).bind('keydown', (event) => {
+    $(window).on('keydown', (event) => {
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {
         case 's':
@@ -29,7 +29,7 @@ class NoteApp extends React.PureComponent {
       }
     })
 
-    $(window).bind('beforeunload', (event) => {
+    $(window).on('beforeunload', (event) => {
       if (!this.state.dirty)
         return
 
@@ -151,8 +151,13 @@ $(window).on('load', () => {
       const noteText = data.note_content || ''
 
       const noteDiv = document.getElementById("note_app")
-      window.noteApp = ReactDOM.render(
-        <NoteApp noteName={initialData.noteName} lastVersion={lastVersion} textContent={noteText}/>,
+      ReactDOM.render(
+        <NoteApp
+          noteName={initialData.noteName}
+          lastVersion={lastVersion}
+          textContent={noteText}
+          ref={app => { window.noteApp = app }}
+        />,
         noteDiv
       )
     })

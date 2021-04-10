@@ -175,9 +175,9 @@ function TodoApp({ todoState, todoActions }) {
       }
     }
 
-    $(window).bind('keydown', shortcutsHandler)
+    $(window).on('keydown', shortcutsHandler)
     return () => {
-      $(window).unbind('keydown', shortcutsHandler)
+      $(window).off('keydown', shortcutsHandler)
     }
   }, [save])
 
@@ -197,9 +197,9 @@ function TodoApp({ todoState, todoActions }) {
       return message
     }
 
-    $(window).bind('beforeunload', beforeunloadHandler)
+    $(window).on('beforeunload', beforeunloadHandler)
     return () => {
-      $(window).unbind('beforeunload', beforeunloadHandler)
+      $(window).off('beforeunload', beforeunloadHandler)
     }
   }, [dirty, save])
 
