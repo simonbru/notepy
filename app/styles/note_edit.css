@@ -1,9 +1,0 @@
-#note_edit_form > #note_content {
-    overflow: hidden;
-    border-radius: 2px;
-    padding: 3px 3px;
-    box-shadow: none;
-    transition: none;
-    font-family: monospace;
-    font-size: 0.93em;
-}

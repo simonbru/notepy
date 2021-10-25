@@ -1,5 +1,5 @@
 import './common'
-import '../styles/note_edit.css'
+import '../styles/note_edit.scss'
 
 import $ from 'jquery'
 import React from 'react'
@@ -122,18 +122,19 @@ class NoteContent extends React.PureComponent {
 
   static defaultProps = {text: ''}
 
-  onChange = (evt) => { this.props.onChange(evt.target.value) }
+  onChange = (evt) => {this.props.onChange(evt.target.value) }
 
   render() {
-    let nbLines = this.props.text.split('\n').length + 1
-    return <textarea
-      className="form-control"
-      id="note_content"
-      onChange={this.onChange}
-      value={this.props.text}
-      rows={nbLines}
-      spellCheck={false}
-    />
+    return <div
+      className="note-content"
+      data-replicated-value={this.props.text}
+    >
+      <textarea
+        onChange={this.onChange}
+        value={this.props.text}
+        spellCheck={false}
+      />
+    </div>
   }
 }
 
