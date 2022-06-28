@@ -16,7 +16,7 @@ ipdb = "*"
 beaker = "==1.*"
 bottle = "==0.12.*"
 cheroot = "==5.*"
-arrow = "==0.12.*"
+arrow = "==0.15.*"
 
 
 [requires]
