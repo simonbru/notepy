@@ -16,6 +16,7 @@ from beaker.middleware import SessionMiddleware
 
 import views as v
 import config as conf
+import utils
 
 current_dir = path.abspath(path.dirname(__file__))
 umask(0o002)
@@ -50,11 +51,14 @@ app_middleware = StripPathMiddleware(app_middleware)
 # Set authorization hook
 @app.hook('before_request')
 def auth_check():
-    s = request.environ.get('beaker.session')
-    auth = s.get('auth')
-    if auth:
+    if request.auth:
+        request.environ["is_authenticated"] = utils.verify_password(request.auth[1])
+    else:
+        session = request.environ.get('beaker.session')
+        request.environ["is_authenticated"] = session.get("is_authenticated")
+
+    if request.environ["is_authenticated"]:
         return
-    s['auth'] = False
     if not request.urlparts.path.startswith(('/login', '/static')):
         abort(401)
 

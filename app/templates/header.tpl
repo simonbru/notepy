@@ -1,5 +1,5 @@
 % from helpers import webpack_styles
-% session = request.environ.get('beaker.session')
+% is_authenticated = request.environ.get('is_authenticated')
 
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,7 @@
 
   </head>
   <body>
-    % if session['auth'] == True:
+    % if is_authenticated:
       <div class="navbar navbar-inverse" role="navigation">
         <div class="container">
           <div class="navbar-header">
