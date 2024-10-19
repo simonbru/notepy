@@ -1,7 +1,5 @@
 import functools
-import hmac
 import re
-from crypt import crypt
 from wsgiref.handlers import format_date_time
 
 import arrow
@@ -11,6 +9,7 @@ from bottle import request, redirect, response, SimpleTemplate
 
 import config as conf
 import notes
+import utils
 
 
 class TemplateAdapter(SimpleTemplate):
@@ -29,14 +28,12 @@ def login():
     s = request.environ.get('beaker.session')
     vars = {}
     if request.method == 'POST':
-        challenge_hash = crypt(request.forms.password, salt=conf.PASSWORD)
-        correct_hash = conf.PASSWORD
-        if not hmac.compare_digest(challenge_hash, correct_hash):
+        if not utils.verify_password(request.forms.password):
             print("Auth error")
             vars['error_msg'] = 'Mauvais mot de passe'
             return vars
         else:
-            s['auth'] = True
+            s['is_authenticated'] = True
             redirect('/n/')
     return vars
 

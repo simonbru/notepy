@@ -1,24 +1,17 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
 ipdb = "*"
-# ipython = "*"
-
 
 [packages]
-
 beaker = "==1.*"
 bottle = "==0.12.*"
 cheroot = "==5.*"
+passlib = "==1.*"
 arrow = "==0.12.*"
 
-
 [requires]
-
-python_version = "3"
+python_version = "3.11"
