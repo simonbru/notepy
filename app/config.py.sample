@@ -11,6 +11,7 @@ NOTES_DIR = _current_dir / 'notes'
 SESSION_DIR = _current_dir / 'session'
 DEVMODE = False
 
-LISTEN_IP = '::'
+LISTEN_IP = '127.0.0.1'
 LISTEN_PORT = 8080
-WSGI_SERVER = 'cherrypy'
+## Use 'wsgiref' in dev (for working autoreload), and 'gunicorn' in prod
+WSGI_SERVER = 'gunicorn'

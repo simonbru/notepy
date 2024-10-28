@@ -87,25 +87,6 @@ def static_route(filepath):
     return static_file(filepath, root=static_path)
 
 
-# CherryPy adapter does not work anymore
-class CherootServer(bottle.ServerAdapter):
-    def run(self, handler):
-        from cheroot.wsgi import Server
-        self.options['bind_addr'] = (self.host, self.port)
-        self.options['wsgi_app'] = handler
-
-        server = Server(**self.options)
-
-        try:
-            server.start()
-        finally:
-            server.stop()
-
-
-# Monkey-patch CherryPy server adapter
-bottle.server_names['cherrypy'] = CherootServer
-
-
 if __name__ == '__main__':
     run(
         app=app_middleware,

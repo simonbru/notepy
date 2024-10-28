@@ -117,7 +117,7 @@ def note_post(note_name):
     current_mtime = notes.get_note(note_name, meta_only=True)['mtime']
     response.add_header(
         'Last-Modified',
-        format_date_time(current_mtime.timestamp)
+        format_date_time(current_mtime.int_timestamp)
     )
 
 
@@ -127,7 +127,7 @@ def note_get(note_name):
 
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp)
+        format_date_time(mtime.int_timestamp)
     )
     response.add_header('Cache-Control', 'no-cache')
     return {
@@ -141,6 +141,6 @@ def note_head(note_name):
 
     response.add_header(
         'Last-Modified',
-        format_date_time(mtime.timestamp)
+        format_date_time(mtime.int_timestamp)
     )
     response.add_header('Cache-Control', 'no-cache')
