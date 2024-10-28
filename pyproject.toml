@@ -1,0 +1,19 @@
+[project]
+name = "notepy"
+version = "0.1.0"
+description = "Online notepad and todolist following the KISS philosophy."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "arrow ==0.12.*",
+    "beaker ==1.12.*",
+    "bottle ==0.12.*",
+    "cheroot ==5.*",
+    "passlib ==1.7.*",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipdb >=0.13.13",
+    "ipython >=8.29.0",
+]
