@@ -11,6 +11,9 @@
     <button class="btn btn-primary" onclick="todoApp.save()">
       <span class="glyphicon glyphicon-floppy-disk"></span> Sauvegarder
     </button>
+    <button class="btn btn-primary" onclick="location.hash = '#bottom'">
+      <span class="glyphicon glyphicon-arrow-down"> </span>
+    </button>
   </div>
 </h2>
 
@@ -31,6 +34,8 @@
   </div>
   <span class="label label-warning pull-right">Chargement...</span>
 </div>
+
+<span id="bottom"></span>
 
 <button class="btn btn-primary" onclick="todoApp.newItem()">
   <span class="glyphicon glyphicon-plus"></span> Nouvelle tâche
