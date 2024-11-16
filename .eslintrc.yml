@@ -3,14 +3,14 @@ env:
 extends:
   - 'eslint:recommended'
   - 'plugin:react/recommended'
-parser: 'babel-eslint'
+parser: '@babel/eslint-parser'
 parserOptions:
   sourceType: module
 plugins:
   - 'react-hooks'
 settings:
   react:
-    version: "16.8"
+    version: "18.3"
 rules:
   indent:
     - error

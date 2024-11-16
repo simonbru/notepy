@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 
+// TODO: fix runtime warnings (console.log)
 module.exports = (env, argv) => {
   const baseName = argv.hot ? "[name]" : "[name].[chunkhash:4]";
 
@@ -34,12 +35,16 @@ module.exports = (env, argv) => {
               loader: "sass-loader",
               options: {
                 sassOptions: {
-                  includePaths: [
+                  loadPaths: [
                     path.resolve(
                       __dirname,
                       "node_modules/bootstrap-sass/assets/stylesheets"
                     ),
                   ],
+                  // Silence deprecation warnings related to bootstrap3
+                  // TODO: find solution for deprecated features
+                  // quietDeps: true,
+                  // silenceDeprecations: ["import"]
                 },
               },
             },
@@ -47,11 +52,11 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/,
-          use: ["file-loader"],
+          type: "asset",
         },
         {
           test: /\.(png|svg|jpg|gif)$/,
-          use: ["file-loader"],
+          type: "asset",
         },
       ],
     },
@@ -61,18 +66,26 @@ module.exports = (env, argv) => {
       filename: `${baseName}.chunk.js`,
     },
     devServer: {
+      host: "127.0.0.1",
       port: 3080,
       // Set --hot from CLI so that we can set `baseName` conditionally
       // hot: true,
-      writeToDisk: (filePath) => filePath.endsWith("/manifest.json"),
-      overlay: {
-        errors: true,
-      },
-      proxy: {
-        "/": {
-          target: process.env.PROXY_TARGET_URL || "http://localhost:8080",
+      client: {
+        overlay: {
+          errors: true,
+          runtimeErrors: true,
+          warnings: false,
         },
       },
+      devMiddleware: {
+        writeToDisk: (filePath) => filePath.endsWith("/manifest.json"),
+      },
+      proxy: [
+        {
+          context: ["/"],
+          target: process.env.PROXY_TARGET_URL || "http://127.0.0.1:8080",
+        },
+      ],
     },
     devtool: "source-map",
     optimization: {
@@ -93,7 +106,6 @@ module.exports = (env, argv) => {
         generate: (seed, files) => filesByEntrypoint(files),
       }),
     ],
-    devtool: "source-map",
   };
 };
 

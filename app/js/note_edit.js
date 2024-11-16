@@ -3,7 +3,7 @@ import '../styles/note_edit.scss'
 
 import $ from 'jquery'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import { SaveStateLabel } from './lib/components'
 
@@ -152,14 +152,14 @@ $(window).on('load', () => {
       const noteText = data.note_content || ''
 
       const noteDiv = document.getElementById("note_app")
-      ReactDOM.render(
+      const root = createRoot(noteDiv)
+      root.render(
         <NoteApp
           noteName={initialData.noteName}
           lastVersion={lastVersion}
           textContent={noteText}
           ref={app => { window.noteApp = app }}
-        />,
-        noteDiv
+        />
       )
     })
 })

@@ -3,7 +3,7 @@ import '../styles/todo_edit.css'
 
 import $ from 'jquery'
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
 import todotxt from 'todotxt.js'
 
@@ -375,13 +375,13 @@ $(window).on('load', () => {
       const noteText = data.note_content || ''
 
       const todoDiv = document.getElementById("todo_app")
-      ReactDOM.render(
+      const root = createRoot(todoDiv)
+      root.render(
         <TodoStore
           noteName={initialData.noteName}
           lastVersion={lastVersion}
           data={noteText}
-        >{renderTodoApp}</TodoStore>,
-        todoDiv
+        >{renderTodoApp}</TodoStore>
       )
     })
 })
