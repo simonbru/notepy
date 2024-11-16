@@ -290,7 +290,9 @@ function TodoItem(props) {
   }
 
   const handleDelete = (evt) => {
-    actions.updateItem(id, '')
+    if (confirm(`Supprimer "${localText}" ?`)) {
+      actions.updateItem(id, '')
+    }
     evt.stopPropagation() // do not call handleEdit
   }
 
